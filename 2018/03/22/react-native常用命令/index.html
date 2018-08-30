@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>react-native常用命令 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Android,react-native," />
+  
+
+  <meta name="description" content="设定手机端口号与react native服务连接：adb reverse tcp:8081 tcp:8081 打包js bundle（路径自己替换）:react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/com/your-company-name/app-p">
+<meta name="keywords" content="Android,react-native">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react-native常用命令">
+<meta property="og:url" content="http://yoursite.com/2018/03/22/react-native常用命令/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="设定手机端口号与react native服务连接：adb reverse tcp:8081 tcp:8081 打包js bundle（路径自己替换）:react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/com/your-company-name/app-p">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.021Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="react-native常用命令">
+<meta name="twitter:description" content="设定手机端口号与react native服务连接：adb reverse tcp:8081 tcp:8081 打包js bundle（路径自己替换）:react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/com/your-company-name/app-p">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-react-native常用命令" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">react-native常用命令</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.03.22</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <ul>
+<li>设定手机端口号与react native服务连接：<code>adb reverse tcp:8081 tcp:8081</code></li>
+<li>打包js bundle（路径自己替换）:<code>react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/com/your-company-name/app-package-name/src/main/assets/index.android.bundle --assets-dest android/com/your-company-name/app-package-name/src/main/res/</code><pre><code>（1）--platform：平台&lt;br&gt;
+（2） --dev：开发模式&lt;br&gt;
+（3） --entry-file：条目文件&lt;br&gt;
+（4）--bundle-output：bundle文件生成的目录&lt;br&gt;
+（5）--assets-dest：资源文件生成的目录&lt;br&gt;
+</code></pre></li>
+<li>打包js bundle（已有项目集成rn,路径自己替换）：<code>react-native bundle --platform android --dev false --entry-file index.js --bundle-output ../app/src/main/assets/index.android.bundle --assets-dest ../app/src/main/res</code></li>
+<li>启动react-native服务：<code>npm start</code></li>
+<li>生成package.json：<code>npm init</code></li>
+<li>安装node modules：<code>npm install</code></li>
+<li>查看当前reactNative版本：<code>react-native --version</code>                                  </li>
+<li>更新全局的reactNative到最新版本：<code>sudo npm update -g react-native-cli</code>         </li>
+<li>查看服务器端的reactNative的各版本信息：<code>npm info react-native</code>        </li>
+<li>根据package.json配置的RN版本,更新RN环境代码：<code>react-native upgrade</code>                     </li>
+<li>运行Android工程：<code>react-native run-android</code></li>
+<li>运行IOS工程：<code>react-native run-ios</code></li>
+<li>初始化一个工程、下载React Native的所有源代码和依赖包：<code>react-native init 工程名</code>                 </li>
+<li>项目降级或升级到指定版本,记得react-native upgrade更新一下项目依赖等：<code>npm install --save react-native@0.18</code>          </li>
+<li>安装某个lib到项目中：<code>npm install react-native-storage --save</code></li>
+</ul>
+<hr>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2018/03/22/react-native常用命令/" target="_blank" rel="noopener">http://robinx.net/2018/03/22/react-native常用命令/</a>    </p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

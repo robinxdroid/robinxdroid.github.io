@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android编程规范 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="规范,代码," />
+  
+
+  <meta name="description" content="如果不是初学者，代码规范性的重要程度不言而喻，结合自身的经验以及网络上其他的建议，总结如下Android代码规范。 包的命名下面是我平时开发的部分命名方式123456789101112-src---|app ---&amp;gt; 包含Application以及全局性的类---|constants ---&amp;gt; 常量类---|helper ---&amp;gt; APP内部的帮助类---|utils ---&amp;g">
+<meta name="keywords" content="规范,代码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android编程规范">
+<meta property="og:url" content="http://yoursite.com/2016/12/02/Android编程规范/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="如果不是初学者，代码规范性的重要程度不言而喻，结合自身的经验以及网络上其他的建议，总结如下Android代码规范。 包的命名下面是我平时开发的部分命名方式123456789101112-src---|app ---&amp;gt; 包含Application以及全局性的类---|constants ---&amp;gt; 常量类---|helper ---&amp;gt; APP内部的帮助类---|utils ---&amp;g">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.018Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android编程规范">
+<meta name="twitter:description" content="如果不是初学者，代码规范性的重要程度不言而喻，结合自身的经验以及网络上其他的建议，总结如下Android代码规范。 包的命名下面是我平时开发的部分命名方式123456789101112-src---|app ---&amp;gt; 包含Application以及全局性的类---|constants ---&amp;gt; 常量类---|helper ---&amp;gt; APP内部的帮助类---|utils ---&amp;g">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#包的命名"><span class="toc-text">包的命名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类中代码的顺序"><span class="toc-text">类中代码的顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#变量"><span class="toc-text">变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法"><span class="toc-text">方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类的命名"><span class="toc-text">类的命名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Activity"><span class="toc-text">Activity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fragment"><span class="toc-text">Fragment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Adapter"><span class="toc-text">Adapter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Helper类"><span class="toc-text">Helper类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#工具类"><span class="toc-text">工具类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回调接口"><span class="toc-text">回调接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#监听接口"><span class="toc-text">监听接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变量的命名"><span class="toc-text">变量的命名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法的命名"><span class="toc-text">方法的命名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源文件命名"><span class="toc-text">资源文件命名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#布局"><span class="toc-text">布局</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#图片"><span class="toc-text">图片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码图形"><span class="toc-text">代码图形</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本原则"><span class="toc-text">基本原则</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-Android编程规范" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">Android编程规范</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.12.02</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>如果不是初学者，代码规范性的重要程度不言而喻，结合自身的经验以及网络上其他的建议，总结如下Android代码规范。</p>
+<h2 id="包的命名"><a href="#包的命名" class="headerlink" title="包的命名"></a>包的命名</h2><p>下面是我平时开发的部分命名方式<br><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">-src</span><br><span class="line">---|app ---&gt; 包含Application以及全局性的类</span><br><span class="line">---|constants ---&gt; 常量类</span><br><span class="line">---|helper ---&gt; APP内部的帮助类</span><br><span class="line">---|utils ---&gt; APP内部的工具类</span><br><span class="line">---|callback ---&gt;通用的回调接口</span><br><span class="line">---|interfaces ---&gt;通用的监听接口</span><br><span class="line">---|ui ---&gt;UI相关</span><br><span class="line">------|activity ---&gt;Activity</span><br><span class="line">------|fragment ---&gt;Fragment</span><br><span class="line">------|adapter ---&gt;Adapter</span><br><span class="line">------|widget ---&gt;自定义控件</span><br></pre></td></tr></table></figure></p>
+<h2 id="类中代码的顺序"><a href="#类中代码的顺序" class="headerlink" title="类中代码的顺序"></a>类中代码的顺序</h2><h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><p>1.常量<br><br>2.静态变量<br><br>3.成员变量<br><br>根据功能作用可中间加空行分隔</p>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p>1.构造函数<br><br>2.生命周期函数<br><br>3.<code>Override</code>函数<br><br>4.<code>public</code>函数<br><br>5.<code>protected</code>函数<br><br>6.<code>private</code>函数<br></p>
+<h2 id="类的命名"><a href="#类的命名" class="headerlink" title="类的命名"></a>类的命名</h2><p>首字母大写，后面驼峰，使用名词</p>
+<h3 id="Activity"><a href="#Activity" class="headerlink" title="Activity"></a>Activity</h3><p><code>XxxActivity.java</code></p>
+<h3 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h3><p><code>XxxFragment.java</code></p>
+<h3 id="Adapter"><a href="#Adapter" class="headerlink" title="Adapter"></a>Adapter</h3><p><code>XxxAdapter.java</code></p>
+<h3 id="Helper类"><a href="#Helper类" class="headerlink" title="Helper类"></a>Helper类</h3><p><code>XxxHelper.java</code></p>
+<h3 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h3><p><code>XxxUtils.java</code></p>
+<h3 id="回调接口"><a href="#回调接口" class="headerlink" title="回调接口"></a>回调接口</h3><p><code>XxxCallback.java</code></p>
+<h3 id="监听接口"><a href="#监听接口" class="headerlink" title="监听接口"></a>监听接口</h3><p><code>XxxListener.java</code></p>
+<h2 id="变量的命名"><a href="#变量的命名" class="headerlink" title="变量的命名"></a>变量的命名</h2><p>1.常量： 所有单词大写，单词以<code>_</code>分隔<br><br>2.静态变量：<code>s</code>开头，后面驼峰<br><br>3.成员变量： <code>m</code>开头，后面驼峰<br></p>
+<h2 id="方法的命名"><a href="#方法的命名" class="headerlink" title="方法的命名"></a>方法的命名</h2><p>首字母小写，后面驼峰</p>
+<h2 id="资源文件命名"><a href="#资源文件命名" class="headerlink" title="资源文件命名"></a>资源文件命名</h2><h3 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h3><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Layout</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Activity</td>
+<td>activity_xxx</td>
+</tr>
+<tr>
+<td>Fragment</td>
+<td>fragment_xxx</td>
+</tr>
+<tr>
+<td>Adapter</td>
+<td>item_xxx</td>
+</tr>
+<tr>
+<td>Dialog</td>
+<td>dialog_xxx</td>
+</tr>
+<tr>
+<td>PopupWindow</td>
+<td>popup_xxx</td>
+</tr>
+<tr>
+<td>Menu</td>
+<td>menu_xxx</td>
+</tr>
+<tr>
+<td>Dialog</td>
+<td>dialog_xxx</td>
+</tr>
+<tr>
+<td>布局引用</td>
+<td>include_xxx</td>
+</tr>
+<tr>
+<td>通用视图</td>
+<td>view_xxx</td>
+</tr>
+</tbody>
+</table>
+<h3 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h3><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>背景图片</td>
+<td>bg_xxx</td>
+</tr>
+<tr>
+<td>按钮图片</td>
+<td>btn_xxx</td>
+</tr>
+<tr>
+<td>单个图标</td>
+<td>icon_xxx</td>
+</tr>
+</tbody>
+</table>
+<h3 id="代码图形"><a href="#代码图形" class="headerlink" title="代码图形"></a>代码图形</h3><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Selector</td>
+<td>selector_xxx</td>
+</tr>
+<tr>
+<td>Shape</td>
+<td>shape_xxx</td>
+</tr>
+</tbody>
+</table>
+<p>以此类推</p>
+<h2 id="基本原则"><a href="#基本原则" class="headerlink" title="基本原则"></a>基本原则</h2><ul>
+<li>删除默认的<code>TODO</code>，合理使用<code>TODO</code>与<code>FIXME</code></li>
+<li>标识性的数字一定要定义成常量</li>
+<li>代码与符号之间加空格</li>
+<li>函数参数不可过多，最好不超过4个</li>
+<li>一般的Exception抛出交给调用者处理</li>
+<li>代码注释认真写</li>
+</ul>
+<hr>
+<p>暂时这么多，后面有的话再补充</p>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2016/12/02/Android编程规范/" target="_blank" rel="noopener">http://robinx.net/2016/12/02/Android编程规范/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

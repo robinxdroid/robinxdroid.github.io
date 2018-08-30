@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>企业App架构组件分层 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="架构,组件," />
+  
+
+  <meta name="description" content="引言上一篇说了Android app 架构，主要方向是组件化。这篇说说企业App的组件化细分，主要是一些个人经验以及建议 组件化与模块化我们会经常看到这两个概念“组件化”，“模块化”，要说他们的详细区别也不好说，都是一个个library module。其实是有区别的，理解清楚才能让我们的app架构更清晰 组件化“组件”英文翻译过来是Component，从字面意思，我们理解为一个组成单元，且不能再往">
+<meta name="keywords" content="架构,组件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="企业App架构组件分层">
+<meta property="og:url" content="http://yoursite.com/2017/03/06/企业App架构组件分层/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="引言上一篇说了Android app 架构，主要方向是组件化。这篇说说企业App的组件化细分，主要是一些个人经验以及建议 组件化与模块化我们会经常看到这两个概念“组件化”，“模块化”，要说他们的详细区别也不好说，都是一个个library module。其实是有区别的，理解清楚才能让我们的app架构更清晰 组件化“组件”英文翻译过来是Component，从字面意思，我们理解为一个组成单元，且不能再往">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.021Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="企业App架构组件分层">
+<meta name="twitter:description" content="引言上一篇说了Android app 架构，主要方向是组件化。这篇说说企业App的组件化细分，主要是一些个人经验以及建议 组件化与模块化我们会经常看到这两个概念“组件化”，“模块化”，要说他们的详细区别也不好说，都是一个个library module。其实是有区别的，理解清楚才能让我们的app架构更清晰 组件化“组件”英文翻译过来是Component，从字面意思，我们理解为一个组成单元，且不能再往">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组件化与模块化"><span class="toc-text">组件化与模块化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组件化"><span class="toc-text">组件化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#模块化"><span class="toc-text">模块化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#App架构组成"><span class="toc-text">App架构组成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-宿主"><span class="toc-text">1.宿主</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#命名"><span class="toc-text">命名</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-组件"><span class="toc-text">2.组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#命名-1"><span class="toc-text">命名</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-模块"><span class="toc-text">3.模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#命名-2"><span class="toc-text">命名</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-公共Library"><span class="toc-text">4.公共Library</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#命名-3"><span class="toc-text">命名</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-路由"><span class="toc-text">5.路由</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-企业App架构组件分层" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">企业App架构组件分层</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.03.06</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>上一篇说了Android app 架构，主要方向是组件化。这篇说说企业App的组件化细分，主要是一些个人经验以及建议</p>
+<h2 id="组件化与模块化"><a href="#组件化与模块化" class="headerlink" title="组件化与模块化"></a>组件化与模块化</h2><p>我们会经常看到这两个概念“组件化”，“模块化”，要说他们的详细区别也不好说，都是一个个library module。其实是有区别的，理解清楚才能让我们的app架构更清晰</p>
+<h2 id="组件化"><a href="#组件化" class="headerlink" title="组件化"></a>组件化</h2><p>“组件”英文翻译过来是<code>Component</code>，从字面意思，我们理解为一个组成单元，且不能再往下拆分，这是重点，例如：“图片加载”组件，它有什么特点：</p>
+<ul>
+<li>可复用</li>
+<li>可替换</li>
+<li>独立 （与其他组件不存在依赖关系）</li>
+<li>不可拆分 （业务代码不能再向下拆分）</li>
+</ul>
+<p>针对以上所说，随便举几个例子，有哪些常见的组件：</p>
+<pre><code>1. 图片加载组件
+2. 图片上传组件
+3. 日志组件
+4. 会话组件
+5. 网络请求组件
+6. 数据库操作组件
+7. app更新组件
+8. 地图组件
+9. 等等...
+</code></pre><h2 id="模块化"><a href="#模块化" class="headerlink" title="模块化"></a>模块化</h2><p>组件化搞清楚，模块化就不难理解了，英文翻译过来是<code>Module</code>，它是一个具体的业务，具体的业务包含一个或多个组件，例如：钱包模块，它的大体特点：</p>
+<ul>
+<li>可以是一个具体的大型业务</li>
+<li>可以是架构组成的其中一个技术模块</li>
+<li>可以是几个组件的功能集合</li>
+</ul>
+<p>常见的模块示例：</p>
+<pre><code>1. 钱包模块
+2. 即时通讯模块
+3. 支付模块
+4. 扫码模块
+5. 等等...
+</code></pre><h2 id="App架构组成"><a href="#App架构组成" class="headerlink" title="App架构组成"></a>App架构组成</h2><p>组件化与模块化搞清楚后我们就开始说详细的架构</p>
+<h3 id="1-宿主"><a href="#1-宿主" class="headerlink" title="1.宿主"></a>1.宿主</h3><p>宿主就是我们的主工程，它是一个壳，可能包含一些业务，大部分或者全部业务都被下面的模块包揽，它只要依赖不同的模块即可。</p>
+<h4 id="命名"><a href="#命名" class="headerlink" title="命名"></a>命名</h4><p>AndroidStudio默认命名为<code>app</code>，可自己随意取，个人习惯用默认的命名</p>
+<h3 id="2-组件"><a href="#2-组件" class="headerlink" title="2.组件"></a>2.组件</h3><p>新开发一个App，首先准备好需要用到的组件</p>
+<ul>
+<li>网络请求组件</li>
+<li>图片加载组件</li>
+<li>图片上传组件</li>
+<li>动态权限组件</li>
+<li>app更新组件</li>
+<li>事件总线组件</li>
+<li>工具类组件</li>
+<li>自定义View组件</li>
+<li>等等…根据个人需求增删</li>
+</ul>
+<h4 id="命名-1"><a href="#命名-1" class="headerlink" title="命名"></a>命名</h4><p>关于组件的命名，个人一般喜欢<code>lib.xxx</code>,也可以<code>component.xxx</code>，加前缀一是起到分类作用，二是可读性较强</p>
+<h3 id="3-模块"><a href="#3-模块" class="headerlink" title="3.模块"></a>3.模块</h3><p>模块涉及到具体业务，示例：</p>
+<ul>
+<li>购物车模块</li>
+<li>商品模块</li>
+<li>结算模块</li>
+<li>支付模块</li>
+<li>钱包模块</li>
+<li>即时通讯模块</li>
+<li>等等…根据业务种类拆分</li>
+</ul>
+<h4 id="命名-2"><a href="#命名-2" class="headerlink" title="命名"></a>命名</h4><p>模块的命名，一般是<code>module.xxx</code>,命名可根据自己喜好，这里只是个人见解</p>
+<h3 id="4-公共Library"><a href="#4-公共Library" class="headerlink" title="4.公共Library"></a>4.公共Library</h3><p>app少不了一些多个module都依赖的一些组件，一般我们把这些组件放在一个公共的library module中，其他用到这些组件的module，可以直接依赖，这就是公共库</p>
+<h4 id="命名-3"><a href="#命名-3" class="headerlink" title="命名"></a>命名</h4><p>命名一般是<code>lib.common</code></p>
+<h3 id="5-路由"><a href="#5-路由" class="headerlink" title="5.路由"></a>5.路由</h3><p>组件化的核心就是路由，module与module之间的无依赖通信全靠它，路由的选择，上篇文章有介绍</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>架构组成基本上就上面说的这些，还有一些注意点：</p>
+<ul>
+<li>组件之间独立无依赖</li>
+<li>模块之间独立无依赖，模块与模块通信使用路由</li>
+<li>模块业务清晰，独立，一个模块负责一个功能，就是我们常说的单一原则</li>
+</ul>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2017/03/06/企业App架构组件分层/" target="_blank" rel="noopener">http://robinx.net/2017/03/06/企业App架构组件分层/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

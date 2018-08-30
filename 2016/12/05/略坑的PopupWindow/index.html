@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>略坑的PopupWindow | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="PopupWindow," />
+  
+
+  <meta name="description" content="其实PopupWindow平时开发中我个人用的并不多，当想写一个底部弹出的菜单的时候，发现这并不是随手就来的事情。我的需求也很简单，就是底部位移弹出菜单，背景随之变暗。实际操作有不少问题需要解决 动画问题setAnimationStylePopupWindow的动画可以通过setAnimationStyle()函数设置一个动画Style，需要到资源文件中定义，同时还需要在anim文件夹中定义好动画">
+<meta name="keywords" content="PopupWindow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="略坑的PopupWindow">
+<meta property="og:url" content="http://yoursite.com/2016/12/05/略坑的PopupWindow/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="其实PopupWindow平时开发中我个人用的并不多，当想写一个底部弹出的菜单的时候，发现这并不是随手就来的事情。我的需求也很简单，就是底部位移弹出菜单，背景随之变暗。实际操作有不少问题需要解决 动画问题setAnimationStylePopupWindow的动画可以通过setAnimationStyle()函数设置一个动画Style，需要到资源文件中定义，同时还需要在anim文件夹中定义好动画">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.022Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="略坑的PopupWindow">
+<meta name="twitter:description" content="其实PopupWindow平时开发中我个人用的并不多，当想写一个底部弹出的菜单的时候，发现这并不是随手就来的事情。我的需求也很简单，就是底部位移弹出菜单，背景随之变暗。实际操作有不少问题需要解决 动画问题setAnimationStylePopupWindow的动画可以通过setAnimationStyle()函数设置一个动画Style，需要到资源文件中定义，同时还需要在anim文件夹中定义好动画">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#动画问题"><span class="toc-text">动画问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#setAnimationStyle"><span class="toc-text">setAnimationStyle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View动画"><span class="toc-text">View动画</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#问题解决方案"><span class="toc-text">问题解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#背景渐变"><span class="toc-text">背景渐变</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-略坑的PopupWindow" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">略坑的PopupWindow</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.12.05</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>其实PopupWindow平时开发中我个人用的并不多，当想写一个底部弹出的菜单的时候，发现这并不是随手就来的事情。我的需求也很简单，就是底部位移弹出菜单，背景随之变暗。实际操作有不少问题需要解决</p>
+<h2 id="动画问题"><a href="#动画问题" class="headerlink" title="动画问题"></a>动画问题</h2><h3 id="setAnimationStyle"><a href="#setAnimationStyle" class="headerlink" title="setAnimationStyle"></a>setAnimationStyle</h3><p>PopupWindow的动画可以通过<code>setAnimationStyle()</code>函数设置一个动画Style，需要到资源文件中定义，同时还需要在anim文件夹中定义好动画文件<br><br>问题：当定义了Translate的动画的时候，背景无法变暗</p>
+<h3 id="View动画"><a href="#View动画" class="headerlink" title="View动画"></a>View动画</h3><p>可以通过对PopupWindow中的View直接做Translate动画，<code>setAnimationStyle()</code>可以设置<code>alpha</code>动画，这样来实现背景渐变<br><br>问题：PopupWindow弹出的时候会卡一下，导致位移动画不能流畅运行，原因就是同时设置了<code>setAnimationStyle()</code>与View动画。这也是我们的项目中目前存在的问题</p>
+<h2 id="问题解决方案"><a href="#问题解决方案" class="headerlink" title="问题解决方案"></a>问题解决方案</h2><p>既然同时设置<code>setAnimationStyle()</code>与View动画有问题，那只能换种方式了，View动画我们可以保留，因为可以针对PopupWindow做各种其他的动画，自由性高点。<code>setAnimationStyle()</code>可以直接撇掉。背景渐变换其他方式来实现</p>
+<h3 id="背景渐变"><a href="#背景渐变" class="headerlink" title="背景渐变"></a>背景渐变</h3><p>如果你做过这方面的需求，会发现网上有这段代码来实现背景的切换</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">WindowManager.LayoutParams lp = ((Activity) mPopView.getContext()).getWindow().getAttributes();</span><br><span class="line">lp.alpha = <span class="number">1f</span>;</span><br><span class="line">((Activity) mPopView.getContext()).getWindow().setAttributes(lp);</span><br><span class="line">((Activity) mPopView.getContext()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);</span><br></pre></td></tr></table></figure>
+<p>实际操作了后发现背景是变暗了，但是是瞬间变化，这太low了，我们要的是渐变。可以用ValueAnimator对其做个动画,这样就可以了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">backgroundAlpha</span><span class="params">(<span class="keyword">float</span> startAlpha, <span class="keyword">float</span> endAlpha, <span class="keyword">long</span> duration)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> WindowManager.LayoutParams lp = ((Activity) mPopView.getContext()).getWindow().getAttributes();</span><br><span class="line">        ValueAnimator valueAnimator = ValueAnimator.ofFloat(startAlpha, endAlpha);</span><br><span class="line">        valueAnimator.setDuration(duration);</span><br><span class="line">        valueAnimator.addUpdateListener(<span class="keyword">new</span> ValueAnimator.AnimatorUpdateListener() &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationUpdate</span><span class="params">(ValueAnimator animation)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">float</span> currentAlpha = (<span class="keyword">float</span>) animation.getAnimatedValue();</span><br><span class="line">                lp.alpha = currentAlpha;</span><br><span class="line">                ((Activity) mPopView.getContext()).getWindow().setAttributes(lp);</span><br><span class="line">                ((Activity) mPopView.getContext()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        valueAnimator.start();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>实际运行后，完美解决</p>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2016/12/05/略坑的PopupWindow/" target="_blank" rel="noopener">http://robinx.net/2016/12/05/略坑的PopupWindow/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

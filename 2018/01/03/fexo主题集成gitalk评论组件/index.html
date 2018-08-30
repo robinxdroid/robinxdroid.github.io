@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>fexo主题集成gitalk评论组件 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="2017,fexo," />
+  
+
+  <meta name="description" content="前言：多说评论组件已经下架，琢磨了下发现gitalk不错，基于github的issue。搜索的集成教程基本上都是next主题集成，谁让这款主题用的人多呢。本文为集成fexo主题集成gitalk 前言：开始集成step1github创建一个代码仓库，用于存储评论数据，这里取名BlogComments, 然后个人用户-&amp;gt;setting-&amp;gt;Developer settings-&amp;gt;OAu">
+<meta name="keywords" content="2017,fexo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fexo主题集成gitalk评论组件">
+<meta property="og:url" content="http://yoursite.com/2018/01/03/fexo主题集成gitalk评论组件/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="前言：多说评论组件已经下架，琢磨了下发现gitalk不错，基于github的issue。搜索的集成教程基本上都是next主题集成，谁让这款主题用的人多呢。本文为集成fexo主题集成gitalk 前言：开始集成step1github创建一个代码仓库，用于存储评论数据，这里取名BlogComments, 然后个人用户-&amp;gt;setting-&amp;gt;Developer settings-&amp;gt;OAu">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.021Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fexo主题集成gitalk评论组件">
+<meta name="twitter:description" content="前言：多说评论组件已经下架，琢磨了下发现gitalk不错，基于github的issue。搜索的集成教程基本上都是next主题集成，谁让这款主题用的人多呢。本文为集成fexo主题集成gitalk 前言：开始集成step1github创建一个代码仓库，用于存储评论数据，这里取名BlogComments, 然后个人用户-&amp;gt;setting-&amp;gt;Developer settings-&amp;gt;OAu">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言："><span class="toc-text">前言：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前言：开始集成"><span class="toc-text">前言：开始集成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#step1"><span class="toc-text">step1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#step2"><span class="toc-text">step2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#step3"><span class="toc-text">step3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#step4"><span class="toc-text">step4</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-fexo主题集成gitalk评论组件" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">fexo主题集成gitalk评论组件</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.01.03</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Blog/">Blog</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h3 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h3><p>多说评论组件已经下架，琢磨了下发现gitalk不错，基于github的issue。搜索的集成教程基本上都是next主题集成，谁让这款主题用的人多呢。本文为集成fexo主题集成gitalk</p>
+<h3 id="前言：开始集成"><a href="#前言：开始集成" class="headerlink" title="前言：开始集成"></a>前言：开始集成</h3><h4 id="step1"><a href="#step1" class="headerlink" title="step1"></a>step1</h4><p>github创建一个代码仓库，用于存储评论数据，这里取名<code>BlogComments</code>,</p>
+<p>然后<code>个人用户-&gt;setting-&gt;Developer settings-&gt;OAuth Apps</code></p>
+<ul>
+<li>Application name  填写仓库名，这里是<code>BlogComments</code></li>
+<li>Homepage URL  网站的地址</li>
+<li>Application description  描述，随意，可不填</li>
+<li>Authorization callback URL 网站的地址</li>
+</ul>
+<p>填好之后，点击Register application，即可得到<code>Client ID</code>与<code>Client Secret</code>。放着，后面有用</p>
+<h4 id="step2"><a href="#step2" class="headerlink" title="step2"></a>step2</h4><p>打开Hexo\themes\fexo\layout_partial\component,创建<code>gitalk.ejs</code></p>
+<p>文件内容直接复制</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;% <span class="keyword">if</span> (theme.gitalk_shortname)&#123; %&gt;</span><br><span class="line">&lt;!-- Gitalk评论插件通用代码 --&gt;</span><br><span class="line">&lt;div id="git"&gt;&lt;/div&gt;</span><br><span class="line">&lt;link rel=<span class="string">"stylesheet"</span> href=<span class="string">"https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css"</span>&gt;</span><br><span class="line">&lt;script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"&gt;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">const</span> gitalk = <span class="keyword">new</span> Gitalk(&#123;</span><br><span class="line">  clientID: <span class="string">'填入第一步获取的clientID'</span>,</span><br><span class="line">  clientSecret: <span class="string">'填入第一步获取的clientSecret'</span>,</span><br><span class="line">  repo: <span class="string">'仓库名称本文中为BlogComments'</span>,</span><br><span class="line">  owner: <span class="string">'你的用户名'</span>,</span><br><span class="line">  admin: [<span class="string">'你的用户名'</span>],</span><br><span class="line">  <span class="comment">// facebook-like distraction free mode</span></span><br><span class="line">  distractionFreeMode: <span class="keyword">false</span></span><br><span class="line">&#125;)</span><br><span class="line">gitalk.render(<span class="string">'git'</span>)</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;!-- Gitalk代码结束 --&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="step3"><a href="#step3" class="headerlink" title="step3"></a>step3</h4><p>打开Hexo\themes\fexo\layout_partial\article.ejs,在文件底部找到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;% if (theme.duoshuo_shortname)&#123; %&gt;</span><br><span class="line">   &lt;i class=&quot;icon-comment&quot;&gt;&lt;/i&gt; </span><br><span class="line">   &lt;span class=&quot;ds-thread-count&quot; data-thread-key=&quot;&lt;%= page.layout %&gt;-&lt;%= page.slug %&gt;&quot;&gt;&lt;i class=&quot;fa fa-spinner fa-spin&quot;&gt;&lt;/i&gt;&lt;/span&gt; 条评论</span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<p>删除它。<br></p>
+<p>在<code>article</code>标签内添加<br></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  &lt;% if (theme.gitalk_shortname &amp;&amp; page.comments &amp;&amp; theme.url)&#123; %&gt;</span><br><span class="line">    &lt;%- partial(&apos;component/gitalk&apos;) %&gt;</span><br><span class="line">&lt;% &#125; else &#123; %&gt;</span><br><span class="line">    &lt;div class=&quot;git&quot;&gt;&lt;/div&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<p>保存即可</p>
+<p>完整文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">&lt;article id=&quot;&lt;%= post.layout %&gt;-&lt;%= post.slug %&gt;&quot; class=&quot;article article-type-&lt;%= post.layout %&gt;&quot; itemprop=&quot;blogPost&quot;&gt;</span><br><span class="line">  &lt;header class=&quot;article-header&quot;&gt;</span><br><span class="line">    &lt;h1 class=&quot;post-title&quot;&gt;&lt;%= post.title || &apos;(no title)&apos; %&gt;&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;div class=&quot;article-meta&quot;&gt;</span><br><span class="line">      &lt;span&gt;</span><br><span class="line">        &lt;i class=&quot;icon-calendar&quot;&gt;&lt;/i&gt;</span><br><span class="line">        &lt;span&gt;&lt;%= date(post.date, &apos;YYYY.MM.DD&apos;) %&gt;&lt;/span&gt;</span><br><span class="line">      &lt;/span&gt;</span><br><span class="line"></span><br><span class="line">      &lt;% if (config.author)&#123; %&gt;</span><br><span class="line">        &lt;span class=&quot;article-author&quot;&gt;</span><br><span class="line">          &lt;i class=&quot;icon-user&quot;&gt;&lt;/i&gt;</span><br><span class="line">          &lt;span&gt;&lt;%= config.author %&gt;&lt;/span&gt;</span><br><span class="line">        &lt;/span&gt;</span><br><span class="line">      &lt;% &#125; %&gt;</span><br><span class="line"></span><br><span class="line">      &lt;%- partial(&apos;component/category&apos;) %&gt;</span><br><span class="line"></span><br><span class="line">      &lt;% if (theme.disqus_shortname &amp;&amp; theme.url &amp;&amp; page.comments)&#123; %&gt;</span><br><span class="line">        &lt;span&gt;</span><br><span class="line">          &lt;i class=&quot;icon-comment&quot;&gt;&lt;/i&gt;</span><br><span class="line">          &lt;a href=&quot;&lt;%= theme.url + url_for(page.path) + &apos;#disqus_thread&apos; %&gt;&quot;&gt;&lt;/a&gt;</span><br><span class="line">        &lt;/span&gt;</span><br><span class="line">      &lt;% &#125; %&gt;</span><br><span class="line"></span><br><span class="line">      &lt;% if (theme.busuanzi)&#123; %&gt;</span><br><span class="line">      &lt;i class=&quot;fa fa-eye&quot;&gt;&lt;/i&gt; </span><br><span class="line">        &lt;span id=&quot;busuanzi_container_page_pv&quot;&gt;</span><br><span class="line">           &amp;nbsp热度 &lt;span id=&quot;busuanzi_value_page_pv&quot;&gt;</span><br><span class="line">           &lt;i class=&quot;fa fa-spinner fa-spin&quot;&gt;&lt;/i&gt;&lt;/span&gt;℃</span><br><span class="line">        &lt;/span&gt;</span><br><span class="line">      &lt;% &#125; %&gt;</span><br><span class="line"></span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/header&gt;</span><br><span class="line"></span><br><span class="line">  &lt;div class=&quot;article-content&quot;&gt;</span><br><span class="line">    &lt;% if (post.excerpt &amp;&amp; index)&#123; %&gt;</span><br><span class="line">      &lt;%- post.excerpt %&gt;</span><br><span class="line">      &lt;% if (theme.excerpt_link)&#123; %&gt;</span><br><span class="line">        &lt;p class=&quot;article-more-link&quot;&gt;</span><br><span class="line">          &lt;a class=&quot;btn btn-primary&quot; href=&quot;&lt;%- url_for(post.path) %&gt;#more&quot;&gt;&lt;%= theme.excerpt_link %&gt;&lt;/a&gt;</span><br><span class="line">        &lt;/p&gt;</span><br><span class="line">      &lt;% &#125; %&gt;</span><br><span class="line">    &lt;% &#125; else &#123; %&gt;</span><br><span class="line">      &lt;%- post.content %&gt;</span><br><span class="line">    &lt;% &#125; %&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  </span><br><span class="line">    &lt;% if (theme.gitalk_shortname &amp;&amp; page.comments &amp;&amp; theme.url)&#123; %&gt;</span><br><span class="line">      &lt;%- partial(&apos;component/gitalk&apos;) %&gt;</span><br><span class="line">  &lt;% &#125; else &#123; %&gt;</span><br><span class="line">      &lt;div class=&quot;git&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">  </span><br><span class="line">&lt;/article&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="step4"><a href="#step4" class="headerlink" title="step4"></a>step4</h4><p>打开 Hexo\themes\fexo_config.yml文件</p>
+<p>注释掉<code>disqus_shortname forsigner</code><br>添加<code>gitalk_shortname: robinxdroid</code></p>
+<hr>
+<p>到此，配置完成，可以git bash 输入hexo server命令，历览器输入<br><code>http://localhost:4000/</code>测试是否正常加载gitalk模块</p>
+<hr>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2018/01/03/fexo主题集成gitalk评论组件" target="_blank" rel="noopener">http://robinx.net/2018/01/03/fexo主题集成gitalk评论组件</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

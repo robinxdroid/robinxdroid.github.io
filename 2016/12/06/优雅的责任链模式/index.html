@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>优雅的责任链模式 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="责任链,模式," />
+  
+
+  <meta name="description" content="24种设计模式6大原则中的责任链平时开发中接触到的并不多，如果你读过Volley的源码应该会有体会，Android同学们都说Volley代码优雅，我想责任链的运用应该是它优雅的部分原因。 责任链基本介绍使多个对象都有机会处理请求，从而避免了请求的发送者和接受者之间的耦合关系。将这些对象连成一条链，并沿着这条链传递该请求，直到有对象处理它为止。说白一点就是一个任务，进入一条链，这条链上存在多个处理器">
+<meta name="keywords" content="责任链,模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="优雅的责任链模式">
+<meta property="og:url" content="http://yoursite.com/2016/12/06/优雅的责任链模式/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="24种设计模式6大原则中的责任链平时开发中接触到的并不多，如果你读过Volley的源码应该会有体会，Android同学们都说Volley代码优雅，我想责任链的运用应该是它优雅的部分原因。 责任链基本介绍使多个对象都有机会处理请求，从而避免了请求的发送者和接受者之间的耦合关系。将这些对象连成一条链，并沿着这条链传递该请求，直到有对象处理它为止。说白一点就是一个任务，进入一条链，这条链上存在多个处理器">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.022Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="优雅的责任链模式">
+<meta name="twitter:description" content="24种设计模式6大原则中的责任链平时开发中接触到的并不多，如果你读过Volley的源码应该会有体会，Android同学们都说Volley代码优雅，我想责任链的运用应该是它优雅的部分原因。 责任链基本介绍使多个对象都有机会处理请求，从而避免了请求的发送者和接受者之间的耦合关系。将这些对象连成一条链，并沿着这条链传递该请求，直到有对象处理它为止。说白一点就是一个任务，进入一条链，这条链上存在多个处理器">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#责任链基本介绍"><span class="toc-text">责任链基本介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Volley中的责任链"><span class="toc-text">Volley中的责任链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#队列与线程的配合"><span class="toc-text">队列与线程的配合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#责任链形成"><span class="toc-text">责任链形成</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#责任链的使用场景"><span class="toc-text">责任链的使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#封装责任链配合线程队列"><span class="toc-text">封装责任链配合线程队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本的队列与线程配合实现"><span class="toc-text">基本的队列与线程配合实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#处理线程"><span class="toc-text">处理线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主线程分发器"><span class="toc-text">主线程分发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#拦截器"><span class="toc-text">拦截器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#优先级"><span class="toc-text">优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多队列配合切换"><span class="toc-text">多队列配合切换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新时间：2016-12-9"><span class="toc-text">更新时间：2016.12.9</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-优雅的责任链模式" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">优雅的责任链模式</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.12.06</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>24种设计模式6大原则中的责任链平时开发中接触到的并不多，如果你读过<code>Volley</code>的源码应该会有体会，Android同学们都说<code>Volley</code>代码优雅，我想责任链的运用应该是它优雅的部分原因。</p>
+<h2 id="责任链基本介绍"><a href="#责任链基本介绍" class="headerlink" title="责任链基本介绍"></a>责任链基本介绍</h2><p>使多个对象都有机会处理请求，从而避免了请求的发送者和接受者之间的耦合关系。将这些对象连成一条链，并沿着这条链传递该请求，直到有对象处理它为止。<br><br>说白一点就是一个任务，进入一条链，这条链上存在多个处理器，从第一个处理器开始，一直向后传递，使得每个处理器都有机会处理这个任务，谁可以处理谁就处理，处理完不再向后传递。此任务被处理完毕。<br><br>简单的抽象处理器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Handler nextHandler;</span><br><span class="line">	<span class="comment">//每个处理者都必须对请求做出处理</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Response <span class="title">handleMessage</span><span class="params">(Request request)</span></span>&#123;</span><br><span class="line">		Response response = <span class="keyword">null</span>;</span><br><span class="line">		<span class="comment">//判断是否是自己的处理级别</span></span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">this</span>.getHandlerLevel().equals(request.getRequestLevel()))&#123;</span><br><span class="line">			response = <span class="keyword">this</span>.echo(request);</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123; <span class="comment">//不属于自己的处理级别</span></span><br><span class="line">			<span class="comment">//判断是否有下一个处理者</span></span><br><span class="line">			<span class="keyword">if</span>(<span class="keyword">this</span>.nextHandler != <span class="keyword">null</span>)&#123;</span><br><span class="line">				response = <span class="keyword">this</span>.nextHandler.handleMessage(request);</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="comment">//没有适当的处理者，业务自行处理</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> response;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//设置下一个处理者是谁</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNext</span><span class="params">(Handler _handler)</span></span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.nextHandler = _handler;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//每个处理者都有一个处理级别</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Level <span class="title">getHandlerLevel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="comment">//每个处理者都必须实现处理任务</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Response <span class="title">echo</span><span class="params">(Request request)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>抽象的处理者实现三个职责：一是定义一个请求的处理方法<code>handleMessage</code>，唯一对外开放的方法；二是定义一个链的编排方法<code>setNext</code>，设置下一个处理者；三是定义了具体的请求者必须实现的两个方法：定义自己能够处理的级别<code>getHandlerLevel</code>和具体的处理任务<code>echo</code>。</p>
+<p>们定义三个具体的处理者，以便可以组成一个链</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler1</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line">	<span class="comment">//定义自己的处理逻辑</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Response <span class="title">echo</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//完成处理逻辑</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//设置自己的处理级别</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Level <span class="title">getHandlerLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//设置自己的处理级别</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler2</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line">	<span class="comment">//定义自己的处理逻辑</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Response <span class="title">echo</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//完成处理逻辑</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//设置自己的处理级别</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Level <span class="title">getHandlerLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//设置自己的处理级别</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler3</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line">	<span class="comment">//定义自己的处理逻辑</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Response <span class="title">echo</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//完成处理逻辑</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//设置自己的处理级别</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Level <span class="title">getHandlerLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//设置自己的处理级别</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在场景类或高层模块中对链进行组装，并传递请求，返回结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//声明所有的处理节点</span></span><br><span class="line">		Handler handler1 = <span class="keyword">new</span> ConcreteHandler1();</span><br><span class="line">		Handler handler2 = <span class="keyword">new</span> ConcreteHandler2();</span><br><span class="line">		Handler handler3 = <span class="keyword">new</span> ConcreteHandler3();</span><br><span class="line">		<span class="comment">//设置链中的阶段顺序1--&gt;2--&gt;3</span></span><br><span class="line">		handler1.setNext(handler2);</span><br><span class="line">		handler2.setNext(handler3);</span><br><span class="line">		<span class="comment">//提交请求，返回结果</span></span><br><span class="line">		Response response = handler1.handlerMessage(<span class="keyword">new</span> Request());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在实际应用中，一般会有一个封装类对责任模式进行封装，也就是替代<code>Client</code>类，直接返回链中的第一个处理者，具体链的设置不需要高层次模块关系，这样，更简化了高层次模块的调用，减少模块间的耦合，提高系统的灵活性。</p>
+<h2 id="Volley中的责任链"><a href="#Volley中的责任链" class="headerlink" title="Volley中的责任链"></a>Volley中的责任链</h2><p>在<code>Volley</code>中，把责任链与线程队列结合了起来，形成一条循环的流水处理线，这个责任链中存在了两个处理器<code>Handler</code>，也叫调度者<code>Dispatcher</code>有关<code>Volley</code>的分析，你可以阅读源码，也可以看这篇分析文章了解下<a href="http://codekk.com/open-source-project-analysis/detail/Android/grumoon/Volley%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90" target="_blank" rel="noopener">Volley 源码解析</a></p>
+<h3 id="队列与线程的配合"><a href="#队列与线程的配合" class="headerlink" title="队列与线程的配合"></a>队列与线程的配合</h3><p>Java为我们提供了很多队列类，这里不详细介绍，感兴趣的可以去谷歌下，Volley中实际创建了两个队列，一个缓存队列，一个网络请求队列</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** The cache triage queue. */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> PriorityBlockingQueue&lt;Request&lt;?&gt;&gt; mCacheQueue =</span><br><span class="line">    <span class="keyword">new</span> PriorityBlockingQueue&lt;Request&lt;?&gt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">/** The queue of requests that are actually going out to the network. */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> PriorityBlockingQueue&lt;Request&lt;?&gt;&gt; mNetworkQueue =</span><br><span class="line">    <span class="keyword">new</span> PriorityBlockingQueue&lt;Request&lt;?&gt;&gt;();</span><br></pre></td></tr></table></figure>
+<p>然后分别开启了1个缓存线程循环从缓存队列中取任务，4个网络请求线程循环从网络请求队列中取任务。在取的时候通过队列的take()方法取出任务，这个方法是阻塞的方法，当队列中无任务的时候，线程会阻塞在这里，直到有新的任务到来</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Take a request from the queue.</span></span><br><span class="line">request = mQueue.take();</span><br></pre></td></tr></table></figure>
+<h3 id="责任链形成"><a href="#责任链形成" class="headerlink" title="责任链形成"></a>责任链形成</h3><p>一个新的请求到来的时候会先进入缓存队列，在缓存处理线程中，有缓存则直接抛出缓存数据到主线程，当发现此Request没有缓存的话，直接进入网络请求队列，由网络请求线程进行请求，获取到数据之后抛出数据到主线程。这就形成了两个处理者构成的责任链。也是Volley的核心。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Attempt to retrieve this item from cache.</span></span><br><span class="line">Cache.Entry entry = mCache.get(request.getCacheKey());</span><br><span class="line"><span class="keyword">if</span> (entry == <span class="keyword">null</span>) &#123;</span><br><span class="line">    request.addMarker(<span class="string">"cache-miss"</span>);</span><br><span class="line">    <span class="comment">// Cache miss; send off to the network dispatcher.</span></span><br><span class="line">    mNetworkQueue.put(request);</span><br><span class="line">    <span class="keyword">continue</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="责任链的使用场景"><a href="#责任链的使用场景" class="headerlink" title="责任链的使用场景"></a>责任链的使用场景</h2><p>相信我们都有过读过的相关知识不知道应用场景，即使知道应用场景，到了那个时候也想不起来用的情况。责任链我个人觉得虽然用的场景不是特别频繁，但是它能解决一些核心的东西，一些复杂的东西在它面前会变得十分简单。</p>
+<p>曾经我帮人做过一个相机连拍的APP，需求是一秒钟至少拍摄5张以上的照片，并且存储到本地，我的实现是通过获取相机每一帧转换成图片，并保存到本地，这其中有不少其他问题，其中一个就是存储的问题，如此高速下，存储的图片小还好说，稍微大点，放主线程肯定是处理不了的，还有就是前面的图片还没存储完，后面又不定时的来新的图片需要存储。存储过程中还要实时展示存储进度。当时碰到这个问题，第一反应是队列来搞，第二就是责任链，原理与Volley处理请求大同小异。责任链与线程队列配合让这个问题变的so easy，再次佩服下谷歌的工程师。</p>
+<h2 id="封装责任链配合线程队列"><a href="#封装责任链配合线程队列" class="headerlink" title="封装责任链配合线程队列"></a>封装责任链配合线程队列</h2><p>有了那次经验之后，意识到了责任链在处理一些问题方面的强大能力，但是每次都要根据具体的场景完整的搭建一个责任链模型，这显然不是我这种封装狂魔的风格。封装起来用，后面遇到任何需要处理队列的地方，直接拿来用，爽爆了。那么封装前，我们需要考虑好支持以下特性</p>
+<ul>
+<li>基本的队列与线程配合，形成流水线</li>
+<li>优先级，任务处理有先后，需要支持设置优先级</li>
+<li>多队列配合，把任务从一个队列抛出到另一个队列进行处理</li>
+<li>拦截器，拦截处理任务，自定义拦截条件</li>
+<li>分发器，负责把处理结果分发到主线程</li>
+<li>处理进度的实时监听</li>
+<li>任务取消，需要自由取消已经已经放入队列中的任务与正在执行的任务</li>
+<li>重复任务过滤，等待</li>
+</ul>
+<h3 id="基本的队列与线程配合实现"><a href="#基本的队列与线程配合实现" class="headerlink" title="基本的队列与线程配合实现"></a>基本的队列与线程配合实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JobQueue</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Job</span>&lt;<span class="title">T</span>&gt;&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_THREAD_POOL_SIZE = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PriorityBlockingQueue&lt;T&gt; mJobQueue = <span class="keyword">new</span> PriorityBlockingQueue&lt;T&gt;();  <span class="comment">//处理队列</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> JobDispatcher&lt;T&gt;[] mJobDispatchers; <span class="comment">//处理线程</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Interceptor&lt;T&gt; mInterceptor; <span class="comment">//拦截器</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Delivery&lt;T&gt; mDelivery; <span class="comment">//分发器</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;JobHandlerListener&lt;T&gt;&gt; mJobHandlerListener = <span class="keyword">new</span> ArrayList&lt;&gt;(); <span class="comment">//处理进度监听</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> AtomicInteger mSequenceGenerator = <span class="keyword">new</span> AtomicInteger(); <span class="comment">//对任务排序用，用于设置优先级</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JobQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(<span class="keyword">new</span> DefaultInterceptor&lt;T&gt;());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JobQueue</span><span class="params">(<span class="keyword">int</span> threadPoolSize)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(threadPoolSize, <span class="keyword">new</span> DefaultInterceptor&lt;T&gt;());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JobQueue</span><span class="params">(Interceptor interceptor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(DEFAULT_THREAD_POOL_SIZE, interceptor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JobQueue</span><span class="params">(<span class="keyword">int</span> threadPoolSize, Interceptor interceptor)</span> </span>&#123;</span><br><span class="line">        mJobDispatchers = <span class="keyword">new</span> JobDispatcher[threadPoolSize];</span><br><span class="line">        <span class="keyword">this</span>.mInterceptor = interceptor;</span><br><span class="line">        mDelivery = <span class="keyword">new</span> DefaultDelivery&lt;T&gt;(<span class="keyword">new</span> android.os.Handler(Looper.getMainLooper()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        stop();</span><br><span class="line"></span><br><span class="line">        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(mJobDispatchers.length);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mJobDispatchers.length; i++) &#123;</span><br><span class="line">            JobDispatcher&lt;T&gt; savedDispatcher = <span class="keyword">new</span> JobDispatcher&lt;T&gt;(mJobQueue, mInterceptor, mDelivery, mJobHandlerListener);</span><br><span class="line">            mJobDispatchers[i] = savedDispatcher;</span><br><span class="line">            threadPoolExecutor.submit(savedDispatcher);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mJobDispatchers.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mJobDispatchers[i] != <span class="keyword">null</span>) &#123;</span><br><span class="line">                mJobDispatchers[i].quit();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> JobQueue <span class="title">add</span><span class="params">(T element)</span> </span>&#123;</span><br><span class="line">        element.setSequence(getSequenceNumber());</span><br><span class="line">        mJobQueue.add(element);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> JobQueue <span class="title">action</span><span class="params">(Action&lt;T&gt; action)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mJobDispatchers.length; i++) &#123;</span><br><span class="line">            mJobDispatchers[i].setAction(action);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> JobQueue <span class="title">addListener</span><span class="params">(JobHandlerListener listener)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mJobHandlerListener.contains(listener)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mJobHandlerListener.add(listener);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getSequenceNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mSequenceGenerator.incrementAndGet();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这相当于我们前面说的Client封装类，任务从此类<code>add()</code>函数进入<code>mJobQueue</code>队列，此队列对应默认4个<code>JobDispatcher</code>处理线程。可以理解为并发量为4，一次可同时并发处理四个任务，嫌小的可以设置大点。</p>
+<h3 id="处理线程"><a href="#处理线程" class="headerlink" title="处理线程"></a>处理线程</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JobDispatcher</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Job</span>&lt;<span class="title">T</span>&gt;&gt; <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BlockingQueue&lt;T&gt; mJobQueue; <span class="comment">//处理队列</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Interceptor&lt;T&gt; mInterceptor; <span class="comment">//拦截器</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Delivery&lt;T&gt; mDelivery;  <span class="comment">//分发器</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;JobHandlerListener&lt;T&gt;&gt; mJobHandlerListeners = <span class="keyword">new</span> ArrayList&lt;&gt;(); <span class="comment">//处理监听</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Action&lt;T&gt; mAction; <span class="comment">//执行动作回调，具体的处理逻辑，由上层定义通过此类call方法回调到这里执行</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> mQuit = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JobDispatcher</span><span class="params">(BlockingQueue&lt;T&gt; jobQueue, Interceptor&lt;T&gt; interceptor, Delivery&lt;T&gt; delivery, List&lt;JobHandlerListener&lt;T&gt;&gt; jobHandlerListeners)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mJobQueue = jobQueue;</span><br><span class="line">        <span class="keyword">this</span>.mInterceptor = interceptor;</span><br><span class="line">        <span class="keyword">this</span>.mDelivery = delivery;</span><br><span class="line">        <span class="keyword">if</span> (jobHandlerListeners != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">this</span>.mJobHandlerListeners = jobHandlerListeners;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        CLog.v(<span class="string">"start new dispatcher"</span>);</span><br><span class="line">        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                T element = mJobQueue.take(); <span class="comment">//获取任务</span></span><br><span class="line">                <span class="keyword">if</span> (element == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (element.isCancel()) &#123; <span class="comment">//判断任务是否取消</span></span><br><span class="line">                    mDelivery.deliveryCancel(mJobHandlerListeners,element); <span class="comment">//分发到主线程调用取消监听</span></span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (mInterceptor != <span class="keyword">null</span> &amp;&amp; mInterceptor.interceptCondition(element)) &#123; <span class="comment">//拦截器不为空且拦截条件为true，进行拦截</span></span><br><span class="line">                    mInterceptor.onIntercept(element);</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                mDelivery.deliveryPrepare(mJobHandlerListeners,element);  <span class="comment">//分发到主线程调用准备监听</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">this</span>.mAction == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">        </span><br><span class="line">                <span class="keyword">this</span>.mAction.call(element);  <span class="comment">//执行动作</span></span><br><span class="line">                </span><br><span class="line">                mDelivery.deliveryFinish(mJobHandlerListeners,element); <span class="comment">//分发到主线程调用完成监听</span></span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                <span class="keyword">if</span> (mQuit) &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAction</span><span class="params">(Action&lt;T&gt; action)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mAction = action;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">quit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mQuit = <span class="keyword">true</span>;</span><br><span class="line">        interrupt();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>处理线程内部是个死循环，不断的从队列中获取任务，获取后进行一些列判定后执行相应动作，完成后分发到主线程回调</p>
+<h3 id="主线程分发器"><a href="#主线程分发器" class="headerlink" title="主线程分发器"></a>主线程分发器</h3><p>下面看下分发器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Delivery</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Job</span>&lt;<span class="title">T</span>&gt;&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deliveryPrepare</span><span class="params">(List&lt;JobHandlerListener&lt;T&gt;&gt; listeners, T job)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deliveryCancel</span><span class="params">(List&lt;JobHandlerListener&lt;T&gt;&gt; listeners, T job)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deliveryFinish</span><span class="params">(List&lt;JobHandlerListener&lt;T&gt;&gt; listeners, T job)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultDelivery</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Job</span>&lt;<span class="title">T</span>&gt;&gt; <span class="keyword">implements</span> <span class="title">Delivery</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Executor mResponsePoster;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DefaultDelivery</span><span class="params">(<span class="keyword">final</span> Handler handler)</span> </span>&#123;</span><br><span class="line">        mResponsePoster = <span class="keyword">new</span> Executor() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable command)</span> </span>&#123;</span><br><span class="line">                handler.post(command);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DefaultDelivery</span><span class="params">(Executor executor)</span> </span>&#123;</span><br><span class="line">        mResponsePoster = executor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deliveryPrepare</span><span class="params">(<span class="keyword">final</span> List&lt;JobHandlerListener&lt;T&gt;&gt; listeners, <span class="keyword">final</span> T job)</span> </span>&#123;</span><br><span class="line">        mResponsePoster.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (job.isCancel()) &#123;</span><br><span class="line">                    deliveryCancel(listeners,job);</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                CLog.d(<span class="string">"deliveryPrepare,current thread:%s"</span>, Thread.currentThread().getName());</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, size = listeners.size(); i &lt; size; i++) &#123;</span><br><span class="line">                    listeners.get(i).onPrepare(job);</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deliveryCancel</span><span class="params">(<span class="keyword">final</span> List&lt;JobHandlerListener&lt;T&gt;&gt; listeners, <span class="keyword">final</span> T job)</span> </span>&#123;</span><br><span class="line">        mResponsePoster.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                CLog.d(<span class="string">"deliveryCancel,current thread:%s"</span>, Thread.currentThread().getName());</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, size = listeners.size(); i &lt; size; i++) &#123;</span><br><span class="line">                    listeners.get(i).onCancel(job);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deliveryFinish</span><span class="params">(<span class="keyword">final</span> List&lt;JobHandlerListener&lt;T&gt;&gt; listeners, <span class="keyword">final</span> T job)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (job.isCancel()) &#123;</span><br><span class="line">            deliveryCancel(listeners,job);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mResponsePoster.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                CLog.d(<span class="string">"deliveryFinish,current thread:%s"</span>, Thread.currentThread().getName());</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, size = listeners.size(); i &lt; size; i++) &#123;</span><br><span class="line">                    listeners.get(i).onFinish(job);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Interceptor</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Job</span>&lt;<span class="title">T</span>&gt;&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">interceptCondition</span><span class="params">(T job)</span></span>;  <span class="comment">//拦截条件</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onIntercept</span><span class="params">(T job)</span></span>; <span class="comment">//拦截后动作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultInterceptor</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Job</span>&lt;<span class="title">T</span>&gt;&gt; <span class="keyword">implements</span> <span class="title">Interceptor</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">interceptCondition</span><span class="params">(T job)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onIntercept</span><span class="params">(T job)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认我们不对拦截做什么动作，上层调用者需要拦截的时候可以传一个自定义的拦截器进行拦截操作</p>
+<h3 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h3><p>上面代码中出现的<code>Job</code>类其实是个抽象类的父类，调用者传入的任务必须继承<code>Job</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Job</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Job</span>&lt;<span class="title">T</span>&gt;&gt; <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Comparable</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">boolean</span> isCancel;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">boolean</span> isComplete;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> Integer mSequence;</span><br><span class="line">    <span class="keyword">protected</span> Priority mPriority = Priority.NORMAL;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Priority <span class="title">getPriority</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mPriority;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Job <span class="title">setPriority</span><span class="params">(Priority priority)</span> </span>&#123;</span><br><span class="line">        mPriority = priority;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isCancel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> isCancel;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Job <span class="title">setCancel</span><span class="params">(<span class="keyword">boolean</span> cancel)</span> </span>&#123;</span><br><span class="line">        isCancel = cancel;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isComplete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> isComplete;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Job <span class="title">setComplete</span><span class="params">(<span class="keyword">boolean</span> complete)</span> </span>&#123;</span><br><span class="line">        isComplete = complete;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getSequence</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mSequence;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Job <span class="title">setSequence</span><span class="params">(Integer sequence)</span> </span>&#123;</span><br><span class="line">        mSequence = sequence;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(T another)</span> </span>&#123;</span><br><span class="line">        Priority left = <span class="keyword">this</span>.getPriority();</span><br><span class="line">        Priority right = another.getPriority();</span><br><span class="line">        <span class="keyword">return</span> left == right ? <span class="keyword">this</span>.mSequence - another.mSequence : right.ordinal() - left.ordinal();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到<code>Job</code>实现了<code>Comparable</code>接口，因为在<code>JobQueue</code>中的<code>PriorityBlockingQueue&lt;T&gt; mJobQueue</code>泛型的必须是<code>Comparable</code>的实现类,这样在<br><code>mJobQueue.take()</code>的时候会根据优先级来取出任务，从而实现任务的优先级功能，具体的优先级判定逻辑，在<code>Job</code>类中实现的<code>compareTo</code>函数中</p>
+<h3 id="多队列配合切换"><a href="#多队列配合切换" class="headerlink" title="多队列配合切换"></a>多队列配合切换</h3><p>其实此功能依赖拦截器来实现，拦截器拦截后，再把任务抛给其他队列就好，看下具体的使用方法就知道了</p>
+<p>先定义一个任务</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestJob</span> <span class="keyword">extends</span> <span class="title">Job</span>&lt;<span class="title">TestJob</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mCount;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mCount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> TestJob <span class="title">setCount</span><span class="params">(<span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">        mCount = count;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mCount;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> JobHandler&lt;TestJob&gt; mCacheJobHandler;</span><br><span class="line">    <span class="keyword">private</span> JobHandler&lt;TestJob&gt; mNetworkJobHandler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//创建缓存处理器，并指定为1个线程，同时设置自定义的拦截器</span></span><br><span class="line">        mCacheJobHandler = <span class="keyword">new</span> JobHandler.Builder&lt;TestJob&gt;().threadPoolSize(<span class="number">1</span>).interceptor(<span class="keyword">new</span> CacheJobInterceptor()).build();</span><br><span class="line">        <span class="comment">//创建网络请求处理器</span></span><br><span class="line">        mNetworkJobHandler = <span class="keyword">new</span> JobHandler.Builder&lt;TestJob&gt;().build();</span><br><span class="line"></span><br><span class="line">        findViewById(R.id.btn).setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">                TestJob job = <span class="keyword">new</span> TestJob();</span><br><span class="line">                <span class="keyword">if</span> (mCount == <span class="number">7</span>) &#123;</span><br><span class="line">                    job.setPriority(Priority.HIGH);  <span class="comment">//设置任务优先级</span></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (mCount == <span class="number">8</span>) &#123;</span><br><span class="line">                    job.setPriority(Priority.IMMEDIATE); <span class="comment">//设置任务优先级</span></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                job.setCount(mCount);</span><br><span class="line"></span><br><span class="line">                mCacheJobHandler.enqueue(job)</span><br><span class="line">                        .action(<span class="keyword">new</span> Action&lt;TestJob&gt;() &#123;</span><br><span class="line">                            <span class="meta">@Override</span></span><br><span class="line">                            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(TestJob element)</span> </span>&#123;  <span class="comment">//具体的读缓存处理逻辑</span></span><br><span class="line">                                <span class="keyword">try</span> &#123;</span><br><span class="line">                                    Thread.sleep(<span class="number">1500</span>);</span><br><span class="line">                                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                                    e.printStackTrace();</span><br><span class="line">                                &#125;</span><br><span class="line">                                CLog.i(<span class="string">"读缓存"</span>+element.getCount());</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;)</span><br><span class="line">                        .addListener(mCacheJobHandlerListener);</span><br><span class="line"></span><br><span class="line">                mCount++;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//自定义拦截器</span></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CacheJobInterceptor</span> <span class="keyword">implements</span> <span class="title">net</span>.<span class="title">robinx</span>.<span class="title">queue</span>.<span class="title">Interceptor</span>&lt;<span class="title">TestJob</span>&gt;</span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">interceptCondition</span><span class="params">(TestJob job)</span> </span>&#123;  <span class="comment">//拦截条件，当count为5时模拟达成条件，返回ture进行拦截</span></span><br><span class="line">            <span class="keyword">if</span> (job.getCount() == <span class="number">5</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onIntercept</span><span class="params">(TestJob job)</span> </span>&#123;  <span class="comment">//缓存队列拦截后，进入网络请求队列</span></span><br><span class="line">            mNetworkJobHandler.enqueue(job)</span><br><span class="line">                    .action(<span class="keyword">new</span> Action&lt;TestJob&gt;() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(TestJob element)</span> </span>&#123; <span class="comment">//具体的网络请求处理逻辑</span></span><br><span class="line">                            <span class="keyword">try</span> &#123;</span><br><span class="line">                                Thread.sleep(<span class="number">1500</span>);</span><br><span class="line">                            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                                e.printStackTrace();</span><br><span class="line">                            &#125;</span><br><span class="line">                            CLog.i(<span class="string">"请求网络"</span>+element.getCount());</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;)</span><br><span class="line">                    .addListener(mNetworkJobHandlerListener);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//缓存任务处理进度监听</span></span><br><span class="line">    <span class="keyword">private</span> JobHandlerListener&lt;TestJob&gt; mCacheJobHandlerListener = <span class="keyword">new</span> JobHandlerListener&lt;TestJob&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPrepare</span><span class="params">(TestJob job)</span> </span>&#123;</span><br><span class="line">            CLog.i(<span class="string">"读缓存准备"</span>+job.getCount());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCancel</span><span class="params">(TestJob job)</span> </span>&#123;</span><br><span class="line">            CLog.i(<span class="string">"读缓存取消"</span>+job.getCount());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFinish</span><span class="params">(TestJob job)</span> </span>&#123;</span><br><span class="line">            CLog.i(<span class="string">"读缓存完成"</span>+job.getCount());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//网络请求任务处理进度监听</span></span><br><span class="line">    <span class="keyword">private</span> JobHandlerListener&lt;TestJob&gt; mNetworkJobHandlerListener = <span class="keyword">new</span> JobHandlerListener&lt;TestJob&gt;() &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPrepare</span><span class="params">(TestJob job)</span> </span>&#123;</span><br><span class="line">            CLog.i(<span class="string">"请求网络准备"</span>+job.getCount());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCancel</span><span class="params">(TestJob job)</span> </span>&#123;</span><br><span class="line">            CLog.i(<span class="string">"请求网络取消"</span>+job.getCount());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFinish</span><span class="params">(TestJob job)</span> </span>&#123;</span><br><span class="line">            CLog.i(<span class="string">"请求网络完成"</span>+job.getCount());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面通过封装的责任链模拟了Volley的核心功能，缓存与网络请求处理线程的切换</p>
+<hr>
+<h2 id="更新时间：2016-12-9"><a href="#更新时间：2016-12-9" class="headerlink" title="更新时间：2016.12.9"></a>更新时间：2016.12.9</h2><p>在以上代码基础上增加了，重复任务判定，当有重复任务时，后续任务进入等待队列，当前任务执行完后，释放队列中的重复任务并执行<br>完善了任务取消</p>
+<p>代码见<a href="https://github.com/robinxdroid/JobQueue" target="_blank" rel="noopener">https://github.com/robinxdroid/JobQueue</a></p>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2016/12/06/优雅的责任链模式/" target="_blank" rel="noopener">http://robinx.net/2016/12/06/优雅的责任链模式/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>编译libjpeg-turbo | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="NDK,Android,压缩,libjpeg," />
+  
+
+  <meta name="description" content="引言Android使用java语言开发，虽然java越来越好，但是涉及到性能方面依然都是普遍的C/C++。本次我们说说Android中图片压缩，关于Android中的图片压缩使用场景太多了，最简单的从相册选择一张图片显示到屏幕，肯定要经过压缩，压缩方式有多种，java层就有质量压缩，尺寸压缩，采样压缩，Mtrix压缩等。一定程度上都能满足需求。追求极致性能的那就要考虑C层的压缩了，LibJpeg是">
+<meta name="keywords" content="NDK,Android,压缩,libjpeg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编译libjpeg-turbo">
+<meta property="og:url" content="http://yoursite.com/2018/01/30/编译libjpeg-turbo/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="引言Android使用java语言开发，虽然java越来越好，但是涉及到性能方面依然都是普遍的C/C++。本次我们说说Android中图片压缩，关于Android中的图片压缩使用场景太多了，最简单的从相册选择一张图片显示到屏幕，肯定要经过压缩，压缩方式有多种，java层就有质量压缩，尺寸压缩，采样压缩，Mtrix压缩等。一定程度上都能满足需求。追求极致性能的那就要考虑C层的压缩了，LibJpeg是">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/linux-ubuntu-sys-info.png?raw=true">
+<meta property="og:image" content="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/libjpeg-need-soft.png?raw=true">
+<meta property="og:image" content="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/libjpeg-linux-sys-env.png?raw=true">
+<meta property="og:image" content="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/libjpeg-compile.png?raw=true">
+<meta property="og:image" content="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/libjpeg-compile-finish.png?raw=true">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.022Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="编译libjpeg-turbo">
+<meta name="twitter:description" content="引言Android使用java语言开发，虽然java越来越好，但是涉及到性能方面依然都是普遍的C/C++。本次我们说说Android中图片压缩，关于Android中的图片压缩使用场景太多了，最简单的从相册选择一张图片显示到屏幕，肯定要经过压缩，压缩方式有多种，java层就有质量压缩，尺寸压缩，采样压缩，Mtrix压缩等。一定程度上都能满足需求。追求极致性能的那就要考虑C层的压缩了，LibJpeg是">
+<meta name="twitter:image" content="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/linux-ubuntu-sys-info.png?raw=true">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#源码"><span class="toc-text">源码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译环境搭建"><span class="toc-text">编译环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#系统平台"><span class="toc-text">系统平台</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编译准备"><span class="toc-text">编译准备</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#NDK"><span class="toc-text">NDK</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#必要软件"><span class="toc-text">必要软件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#配置系统环境变量"><span class="toc-text">配置系统环境变量</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编译流程"><span class="toc-text">编译流程</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-编译libjpeg-turbo" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">编译libjpeg-turbo</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.01.30</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a> / <a class="article-category-link" href="/categories/Android/NDK/">NDK</a> / <a class="article-category-link" href="/categories/Android/NDK/Linux/">Linux</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>Android使用java语言开发，虽然java越来越好，但是涉及到性能方面依然都是普遍的C/C++。本次我们说说Android中图片压缩，关于Android中的图片压缩使用场景太多了，最简单的从相册选择一张图片显示到屏幕，肯定要经过压缩，压缩方式有多种，java层就有质量压缩，尺寸压缩，采样压缩，Mtrix压缩等。一定程度上都能满足需求。追求极致性能的那就要考虑C层的压缩了，<code>LibJpeg</code>是图片处理方面很出名的库，也衍生了<code>LibJpegTurbo</code>库，用于Android平台。网上搜索基本上都能搜到相关的编译好的so文件，基本上都是差不多的文章，so文件只有<code>armeabi</code>,<code>armeabi-v7a</code>两个架构，想找x86版本的，地翻过来都没有找到。咋办，自己编呗。。</p>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p><a href="https://libjpeg-turbo.org/" target="_blank" rel="noopener">https://libjpeg-turbo.org/</a></p>
+<h3 id="编译环境搭建"><a href="#编译环境搭建" class="headerlink" title="编译环境搭建"></a>编译环境搭建</h3><h4 id="系统平台"><a href="#系统平台" class="headerlink" title="系统平台"></a>系统平台</h4><p><code>Linux</code><br>不满足条件的安装VMWare虚拟机，本人也是安装虚拟机来搭建平台，安装乌班图系统即可</p>
+<p><img src="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/linux-ubuntu-sys-info.png?raw=true" alt=""></p>
+<h4 id="编译准备"><a href="#编译准备" class="headerlink" title="编译准备"></a>编译准备</h4><h5 id="NDK"><a href="#NDK" class="headerlink" title="NDK"></a>NDK</h5><p>编译so文件自然少不了NDK，一定要Linux平台的NDK，下载地址<a href="https://dl.google.com/android/repository/android-ndk-r15c-linux-x86_64.zip?utm_source=androiddevtools&amp;utm_medium=website" target="_blank" rel="noopener">android-ndk-r15c-linux-x86_64.zip</a></p>
+<h5 id="必要软件"><a href="#必要软件" class="headerlink" title="必要软件"></a>必要软件</h5><ol>
+<li><a href="http://ftp.gnu.org/gnu/m4/" target="_blank" rel="noopener">m4</a> (下载最新的gz文件)</li>
+<li><a href="ftp://ftp.gnu.org/gnu/autoconf/" target="_blank" rel="noopener">autoconf</a> (下载最新的gz文件)</li>
+<li><a href="http://ftp.gnu.org/gnu/automake/" target="_blank" rel="noopener">automake</a> (下载最新的gz文件)</li>
+<li><a href="ftp://ftp.gnu.org/gnu/libtool/" target="_blank" rel="noopener">libtool</a> (下载最新的gz文件)</li>
+<li><a href="http://www.nasm.us/" target="_blank" rel="noopener">nasm</a> (下载最新的gz文件，此库是编译x86架构so必须的)</li>
+</ol>
+<p>由于个别软件之间有依赖关系，最好按照以上顺序来安装</p>
+<p>下载好后，逐个进行安装,</p>
+<blockquote>
+<p><code>tar -xzvf   *.gz      //解压</code><br><br><code>cd dir                //切换到解压目录</code></p>
+</blockquote>
+<blockquote>
+<p><code>./configure</code><br><br><code>make</code><br><br><code>sudo make install      //有需要的输入系统登录账户密码</code></p>
+</blockquote>
+<p>检验是否安装成功，比如automake,终端定位到安装目录，执行</p>
+<blockquote>
+<p><code>automake --version</code></p>
+</blockquote>
+<p>正常显示版本表示安装成功</p>
+<p>安全全部软件如图：</p>
+<p><img src="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/libjpeg-need-soft.png?raw=true" alt=""></p>
+<h5 id="配置系统环境变量"><a href="#配置系统环境变量" class="headerlink" title="配置系统环境变量"></a>配置系统环境变量</h5><p>将上面安装的软件配置到环境变量中</p>
+<blockquote>
+<p>sudo gedit /etc/environment</p>
+</blockquote>
+<p>打开配置文件，在<code>PATH=&#39;……&#39;</code>后面加入<code>&quot;:我们安装的路径&quot;</code>,注意路径前面有冒号<code>:</code></p>
+<p><img src="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/libjpeg-linux-sys-env.png?raw=true" alt=""></p>
+<p>编辑完后，点击save保存并关闭，然后执行<br><code>source /etc/environment</code><br>使之立即生效</p>
+<h4 id="编译流程"><a href="#编译流程" class="headerlink" title="编译流程"></a>编译流程</h4><ul>
+<li><p>新建一个目录，存放libjpeg源码，这里我们取名<code>source</code></p>
+</li>
+<li><p>在<code>source</code>目录中新建一个目录用于存放编译文件，这里我们取名<code>libjpeg</code></p>
+</li>
+<li><p>在<code>source</code>目录中新建一个目录用于存放编译成功后生成的so文件等，这里我们取名<code>dist</code></p>
+</li>
+<li><p>编写编译脚本文件：</p>
+</li>
+</ul>
+<hr>
+<p><code>armeabi_v7a.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">cd libjpeg</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NDK_PATH=/home/robin/Android/android-ndk-r15c</span><br><span class="line"></span><br><span class="line">BUILD_PLATFORM=linux-x86_64</span><br><span class="line"></span><br><span class="line">TOOLCHAIN_VERSION=4.9</span><br><span class="line"></span><br><span class="line">ANDROID_VERSION=21</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HOST=arm-linux-androideabi</span><br><span class="line"></span><br><span class="line">SYSROOT=$&#123;NDK_PATH&#125;/platforms/android-$&#123;ANDROID_VERSION&#125;/arch-arm</span><br><span class="line"></span><br><span class="line">ANDROID_CFLAGS=&quot;-march=armv7-a -mfloat-abi=softfp -fprefetch-loop-arrays -mfpu=neon -mthumb -D__ANDROID__ -D__ARM_ARCH_7__ \</span><br><span class="line"></span><br><span class="line">  --sysroot=$&#123;SYSROOT&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">TOOLCHAIN=$&#123;NDK_PATH&#125;/toolchains/$&#123;HOST&#125;-$&#123;TOOLCHAIN_VERSION&#125;/prebuilt/$&#123;BUILD_PLATFORM&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">export CPP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-cpp</span><br><span class="line"></span><br><span class="line">export AR=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ar</span><br><span class="line"></span><br><span class="line">export NM=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-nm</span><br><span class="line"></span><br><span class="line">export CC=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-gcc</span><br><span class="line"></span><br><span class="line">export LD=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ld</span><br><span class="line"></span><br><span class="line">export RANLIB=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ranlib</span><br><span class="line"></span><br><span class="line">export OBJDUMP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-objdump</span><br><span class="line"></span><br><span class="line">export STRIP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-strip</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sh ../libjpeg-turbo-master/configure --host=$&#123;HOST&#125; \</span><br><span class="line"></span><br><span class="line">   CFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125; -O3 -fPIE&quot; \</span><br><span class="line"></span><br><span class="line">   CPPFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125;&quot; \</span><br><span class="line"></span><br><span class="line">   LDFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125; -pie&quot; --with-simd $&#123;1+&quot;$@&quot;&#125; --with-jpeg8 \</span><br><span class="line"></span><br><span class="line">   --prefix=/home/robin/source/dist/libjpeg-turbo/armeabi-v7a/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">make</span><br><span class="line"></span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<hr>
+<p><code>arm64_v8a.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">cd libjpeg</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NDK_PATH=/home/robin/Android/android-ndk-r15c</span><br><span class="line"></span><br><span class="line">BUILD_PLATFORM=linux-x86_64</span><br><span class="line"></span><br><span class="line">TOOLCHAIN_VERSION=4.9</span><br><span class="line"></span><br><span class="line">ANDROID_VERSION=21</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HOST=aarch64-linux-android</span><br><span class="line"></span><br><span class="line">SYSROOT=$&#123;NDK_PATH&#125;/platforms/android-$&#123;ANDROID_VERSION&#125;/arch-arm64</span><br><span class="line"></span><br><span class="line">ANDROID_CFLAGS=&quot;--sysroot=$&#123;SYSROOT&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">TOOLCHAIN=$&#123;NDK_PATH&#125;/toolchains/$&#123;HOST&#125;-$&#123;TOOLCHAIN_VERSION&#125;/prebuilt/$&#123;BUILD_PLATFORM&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">export CPP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-cpp</span><br><span class="line"></span><br><span class="line">export AR=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ar</span><br><span class="line"></span><br><span class="line">export NM=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-nm</span><br><span class="line"></span><br><span class="line">export CC=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-gcc</span><br><span class="line"></span><br><span class="line">export LD=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ld</span><br><span class="line"></span><br><span class="line">export RANLIB=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ranlib</span><br><span class="line"></span><br><span class="line">export OBJDUMP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-objdump</span><br><span class="line"></span><br><span class="line">export STRIP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-strip</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sh ../libjpeg-turbo-master/configure --host=$&#123;HOST&#125; \</span><br><span class="line"></span><br><span class="line">   CFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125; -O3 -fPIE&quot; \</span><br><span class="line"></span><br><span class="line">   CPPFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125;&quot; \</span><br><span class="line"></span><br><span class="line">   LDFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125; -pie&quot; --with-simd $&#123;1+&quot;$@&quot;&#125; --with-jpeg8 \</span><br><span class="line"></span><br><span class="line">   --prefix=/home/robin/source/dist/libjpeg-turbo/arm64-v8a/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">make</span><br><span class="line"></span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<hr>
+<p><code>x86.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">cd libjpeg</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NDK_PATH=/home/robin/Android/android-ndk-r15c</span><br><span class="line"></span><br><span class="line">BUILD_PLATFORM=linux-x86_64</span><br><span class="line"></span><br><span class="line">TOOLCHAIN_VERSION=4.9</span><br><span class="line"></span><br><span class="line">ANDROID_VERSION=21</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HOST=i686-linux-android</span><br><span class="line"></span><br><span class="line">SYSROOT=$&#123;NDK_PATH&#125;/platforms/android-$&#123;ANDROID_VERSION&#125;/arch-x86</span><br><span class="line"></span><br><span class="line">ANDROID_CFLAGS=&quot;--sysroot=$&#123;SYSROOT&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">TOOLCHAIN=$&#123;NDK_PATH&#125;/toolchains/x86-$&#123;TOOLCHAIN_VERSION&#125;/prebuilt/$&#123;BUILD_PLATFORM&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">export CPP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-cpp</span><br><span class="line"></span><br><span class="line">export AR=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ar</span><br><span class="line"></span><br><span class="line">export NM=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-nm</span><br><span class="line"></span><br><span class="line">export CC=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-gcc</span><br><span class="line"></span><br><span class="line">export LD=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ld</span><br><span class="line"></span><br><span class="line">export RANLIB=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ranlib</span><br><span class="line"></span><br><span class="line">export OBJDUMP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-objdump</span><br><span class="line"></span><br><span class="line">export STRIP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-strip</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sh ../libjpeg-turbo-master/configure --host=$&#123;HOST&#125; \</span><br><span class="line"></span><br><span class="line">   CFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125; -O3 -fPIE&quot; \</span><br><span class="line"></span><br><span class="line">   CPPFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125;&quot; \</span><br><span class="line"></span><br><span class="line">   LDFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125; -pie&quot; --with-simd $&#123;1+&quot;$@&quot;&#125; --with-jpeg8 \</span><br><span class="line"></span><br><span class="line">   --prefix=/home/robin/source/dist/libjpeg-turbo/x86/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">make</span><br><span class="line"></span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<hr>
+<p><code>x86_64.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">cd libjpeg</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NDK_PATH=/home/robin/Android/android-ndk-r15c</span><br><span class="line"></span><br><span class="line">BUILD_PLATFORM=linux-x86_64</span><br><span class="line"></span><br><span class="line">TOOLCHAIN_VERSION=4.9</span><br><span class="line"></span><br><span class="line">ANDROID_VERSION=21</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HOST=x86_64-linux-android</span><br><span class="line"></span><br><span class="line">SYSROOT=$&#123;NDK_PATH&#125;/platforms/android-$&#123;ANDROID_VERSION&#125;/arch-x86_64</span><br><span class="line"></span><br><span class="line">ANDROID_CFLAGS=&quot;--sysroot=$&#123;SYSROOT&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">TOOLCHAIN=$&#123;NDK_PATH&#125;/toolchains/x86_64-$&#123;TOOLCHAIN_VERSION&#125;/prebuilt/$&#123;BUILD_PLATFORM&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">export CPP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-cpp</span><br><span class="line"></span><br><span class="line">export AR=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ar</span><br><span class="line"></span><br><span class="line">export NM=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-nm</span><br><span class="line"></span><br><span class="line">export CC=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-gcc</span><br><span class="line"></span><br><span class="line">export LD=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ld</span><br><span class="line"></span><br><span class="line">export RANLIB=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-ranlib</span><br><span class="line"></span><br><span class="line">export OBJDUMP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-objdump</span><br><span class="line"></span><br><span class="line">export STRIP=$&#123;TOOLCHAIN&#125;/bin/$&#123;HOST&#125;-strip</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sh ../libjpeg-turbo-master/configure --host=$&#123;HOST&#125; \</span><br><span class="line"></span><br><span class="line">   CFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125; -O3 -fPIE&quot; \</span><br><span class="line"></span><br><span class="line">   CPPFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125;&quot; \</span><br><span class="line"></span><br><span class="line">   LDFLAGS=&quot;$&#123;ANDROID_CFLAGS&#125; -pie&quot; --with-simd $&#123;1+&quot;$@&quot;&#125; --with-jpeg8 \</span><br><span class="line"></span><br><span class="line">   --prefix=/home/robin/source/dist/libjpeg-turbo/x86-64/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">make</span><br><span class="line"></span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>以上脚本需要根据你的源码目录，NDK目录，修改相应的路径,–prefix指定编译的安装目录，就是最终的库存放位置</p>
+</li>
+<li><p>在终端里执行以上脚本<code>sh ./armeabi-v7a.sh</code></p>
+</li>
+<li><p>编译一种架构后，可以通过<code>make distclean</code>清除上一次编译结果，如果出错，手动删除libjpeg目录下文件即可</p>
+</li>
+<li><p>如果sh文件执行不了，例如提示cd命令错误，这是由于文件中存在的一些空格编码，造成的，需要用以下命令进行转码下，生成新文件<br><code>tr -d &#39;\r&#39; &lt; start.sh  &gt; fixed.sh</code>,然后执行新的sh文件即可</p>
+</li>
+</ul>
+<p><img src="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/libjpeg-compile.png?raw=true" alt=""></p>
+<p>我们的编译成果</p>
+<p><img src="https://github.com/robinxdroid/BlogRes/blob/master/images/2018-1-30/libjpeg-compile-finish.png?raw=true" alt=""></p>
+<hr>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2018/01/30/编译libjpeg-turbo/" target="_blank" rel="noopener">http://robinx.net/2018/01/30/编译libjpeg-turbo/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

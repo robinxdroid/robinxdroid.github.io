@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>Kotlin笔记 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="kotlin,语言," />
+  
+
+  <meta name="description" content="引言2017年的谷歌 I/O大会上，Android团队宣布Kotlin成为了Android平台的官方支持的编程语言。跟随时代的脚步，也马上的开始学习这门语言，过程中，记录一些要点，心得 基本语法直接看文档更合适：https://github.com/huanglizhuo/kotlin-in-chinese 一些区别kotlin与java的一些直接的对比：https://github.com/Mi">
+<meta name="keywords" content="kotlin,语言">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kotlin笔记">
+<meta property="og:url" content="http://yoursite.com/2017/06/26/Kotlin笔记/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="引言2017年的谷歌 I/O大会上，Android团队宣布Kotlin成为了Android平台的官方支持的编程语言。跟随时代的脚步，也马上的开始学习这门语言，过程中，记录一些要点，心得 基本语法直接看文档更合适：https://github.com/huanglizhuo/kotlin-in-chinese 一些区别kotlin与java的一些直接的对比：https://github.com/Mi">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.019Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kotlin笔记">
+<meta name="twitter:description" content="引言2017年的谷歌 I/O大会上，Android团队宣布Kotlin成为了Android平台的官方支持的编程语言。跟随时代的脚步，也马上的开始学习这门语言，过程中，记录一些要点，心得 基本语法直接看文档更合适：https://github.com/huanglizhuo/kotlin-in-chinese 一些区别kotlin与java的一些直接的对比：https://github.com/Mi">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本语法"><span class="toc-text">基本语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一些区别"><span class="toc-text">一些区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#要点"><span class="toc-text">要点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#属性"><span class="toc-text">属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法"><span class="toc-text">方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类"><span class="toc-text">类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#接口"><span class="toc-text">接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#抽象类"><span class="toc-text">抽象类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他点"><span class="toc-text">其他点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-Kotlin笔记" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">Kotlin笔记</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.06.26</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a> / <a class="article-category-link" href="/categories/Android/Kotlin/">Kotlin</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>2017年的谷歌 I/O大会上，Android团队宣布Kotlin成为了Android平台的官方支持的编程语言。跟随时代的脚步，也马上的开始学习这门语言，过程中，记录一些要点，心得</p>
+<h2 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h2><p>直接看文档更合适：<a href="https://github.com/huanglizhuo/kotlin-in-chinese" target="_blank" rel="noopener">https://github.com/huanglizhuo/kotlin-in-chinese</a></p>
+<h2 id="一些区别"><a href="#一些区别" class="headerlink" title="一些区别"></a>一些区别</h2><p>kotlin与java的一些直接的对比：<a href="https://github.com/MindorksOpenSource/from-java-to-kotlin/blob/master/README-ZH.md" target="_blank" rel="noopener">https://github.com/MindorksOpenSource/from-java-to-kotlin</a></p>
+<h2 id="要点"><a href="#要点" class="headerlink" title="要点"></a>要点</h2><p>下面是个人学习kotlin开发的时候的一些心得与要点</p>
+<h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><ul>
+<li><p>kotlin的实体类默认实现了get set方法，直接通过<code>.</code>号取值赋值</p>
+</li>
+<li><p>kotlin定义变量的时候有 <code>var</code> <code>val</code>两种，<code>var</code>是普通变量，<code>val</code>是只读变量，即java中的<code>final</code></p>
+</li>
+<li><p>kotlin类中的上下文，eg:<code>MainActivity.this</code>,用kotlin表示:<code>this@MainActivity</code></p>
+</li>
+<li><p><code>?</code>符号是个神器，参见上面给出的文档，但是有些时候要注意下，比如我们定义一个变量<br><br> <code>private var mContext: Context? = null</code><br><br>那么下次在使用的时候，需要你确认它不为null，需要这样写mContext!!，写的地方多就会嫌麻烦,那么你可以这样定义，避免这个问题<br><br> <code>lateinit internal var mContext: Context</code></p>
+</li>
+</ul>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><ul>
+<li>静态方法定义:<br><br>利用伴随对象<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">companion object &#123;</span><br><span class="line"></span><br><span class="line">        <span class="function">fun <span class="title">callIntent</span><span class="params">(context: Context, folder: Folder)</span>: Intent </span>&#123;</span><br><span class="line">            val intent = Intent(context, PlayListDetailsActivity::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line"><span class="class">            <span class="title">intent</span>.<span class="title">putExtra</span>(<span class="title">EXTRA_FOLDER</span>, <span class="title">folder</span>)</span></span><br><span class="line"><span class="class">            <span class="title">return</span> <span class="title">intent</span></span></span><br><span class="line"><span class="class">        &#125;</span></span><br><span class="line"><span class="class">    &#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="类"><a href="#类" class="headerlink" title="类"></a>类</h3><ul>
+<li>class调用:<br><br>java:<code>PlayListDetailsActivity.class</code><br>kotlin:<code>PlayListDetailsActivity::class.java</code></li>
+</ul>
+<h3 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h3><ul>
+<li><p>kotlin的接口就流弊了，接口中可以有函数体，这点java做不到，利用这个特性，我们可以做很多解耦的工作，比如只要实现一个接口，我们就能使用它内部定义好的功能函数，非常nice<br></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Toaster</span> </span>&#123;</span><br><span class="line">    <span class="function">fun <span class="title">toast</span><span class="params">(context: Context,string: String)</span></span>&#123;</span><br><span class="line">        Toast.makeText(context,string,Toast.LENGTH_SHORT).show()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实现回调与监听:<br><br>利用<code>object</code>关键字通过<code>:</code>实现这个接口，重新内部抽象函数<br></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">adapter.setOnItemClickListener(object : OnItemClickListener &#123;</span><br><span class="line">            <span class="function">override fun <span class="title">onItemClick</span><span class="params">(itemView: View?, viewType: Int, position: Int)</span> </span>&#123;</span><br><span class="line">                RxBus.get().post(PlayListNowEvent(mPlayList!!, position))</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h3><ul>
+<li>实现抽象类函数:<br><br>利用<code>object</code>关键字通过<code>:</code>继承这个抽象类，重新内部抽象函数，要注意的是类名后面要加<code>()</code>这是与接口的区别<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">view_pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() &#123;</span><br><span class="line">         <span class="function">override fun <span class="title">onPageSelected</span><span class="params">(position: Int)</span> </span>&#123;</span><br><span class="line">             radioButtons[position].isChecked = <span class="keyword">true</span></span><br><span class="line">         &#125;</span><br><span class="line">     &#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="其他点"><a href="#其他点" class="headerlink" title="其他点"></a>其他点</h3><ul>
+<li>懒加载,lazy内部代码执行时间为这个变量第一次使用的时候<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> val mTitles by lazy &#123; resources.getStringArray(R.array.mp_main_titles) &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>不间断补充，Kotlin这门语言用着目前感受不错，以后再慢慢深入吧</p>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2017/06/26/Kotlin笔记/" target="_blank" rel="noopener">http://robinx.net/2017/06/26/Kotlin笔记/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

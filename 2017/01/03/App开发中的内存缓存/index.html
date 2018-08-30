@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>App开发中的内存缓存 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Cache,MemoryCahce,LruCache," />
+  
+
+  <meta name="description" content="缓存对于老司机来说应该不陌生，对于初学者来说接触的应该不多。 缓存的作用 优化加载速度 减少频繁的网络请求，减少并发，减少服务器压力 节省用户流量  缓存的常用场景 图片请求框架应该是最常见的了，UIL，Picasso，Glide,Fresco等基本上都是2级缓存（磁盘，内存） 接口数据量大，且更新不是特别频繁的数据，可以进行缓存。例如：电商App主页 当然也可以做永久缓存，代替SharedPre">
+<meta name="keywords" content="Cache,MemoryCahce,LruCache">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App开发中的内存缓存">
+<meta property="og:url" content="http://yoursite.com/2017/01/03/App开发中的内存缓存/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="缓存对于老司机来说应该不陌生，对于初学者来说接触的应该不多。 缓存的作用 优化加载速度 减少频繁的网络请求，减少并发，减少服务器压力 节省用户流量  缓存的常用场景 图片请求框架应该是最常见的了，UIL，Picasso，Glide,Fresco等基本上都是2级缓存（磁盘，内存） 接口数据量大，且更新不是特别频繁的数据，可以进行缓存。例如：电商App主页 当然也可以做永久缓存，代替SharedPre">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.018Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="App开发中的内存缓存">
+<meta name="twitter:description" content="缓存对于老司机来说应该不陌生，对于初学者来说接触的应该不多。 缓存的作用 优化加载速度 减少频繁的网络请求，减少并发，减少服务器压力 节省用户流量  缓存的常用场景 图片请求框架应该是最常见的了，UIL，Picasso，Glide,Fresco等基本上都是2级缓存（磁盘，内存） 接口数据量大，且更新不是特别频繁的数据，可以进行缓存。例如：电商App主页 当然也可以做永久缓存，代替SharedPre">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存的作用"><span class="toc-text">缓存的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存的常用场景"><span class="toc-text">缓存的常用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存的类型"><span class="toc-text">缓存的类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存缓存"><span class="toc-text">内存缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#内存缓存的实现方式"><span class="toc-text">内存缓存的实现方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存缓存策略"><span class="toc-text">内存缓存策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自己实现内存缓存"><span class="toc-text">自己实现内存缓存</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-App开发中的内存缓存" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">App开发中的内存缓存</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.01.03</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>缓存对于老司机来说应该不陌生，对于初学者来说接触的应该不多。</p>
+<h2 id="缓存的作用"><a href="#缓存的作用" class="headerlink" title="缓存的作用"></a>缓存的作用</h2><ul>
+<li>优化加载速度</li>
+<li>减少频繁的网络请求，减少并发，减少服务器压力</li>
+<li>节省用户流量</li>
+</ul>
+<h2 id="缓存的常用场景"><a href="#缓存的常用场景" class="headerlink" title="缓存的常用场景"></a>缓存的常用场景</h2><ol>
+<li>图片请求框架应该是最常见的了，<code>UIL</code>，<code>Picasso</code>，<code>Glide</code>,<code>Fresco</code>等基本上都是2级缓存（磁盘，内存）</li>
+<li>接口数据量大，且更新不是特别频繁的数据，可以进行缓存。例如：电商App主页</li>
+<li>当然也可以做永久缓存，代替<code>SharedPreference</code>存储相关数据<h2 id="缓存的类型"><a href="#缓存的类型" class="headerlink" title="缓存的类型"></a>缓存的类型</h2></li>
+</ol>
+<p>Android中常见的缓存类型基本上就2种</p>
+<ul>
+<li>内存缓存</li>
+<li>磁盘缓存</li>
+</ul>
+<h2 id="内存缓存"><a href="#内存缓存" class="headerlink" title="内存缓存"></a>内存缓存</h2><p>本篇我们先讨论内存缓存<code>MemoryCahce</code></p>
+<h3 id="内存缓存的实现方式"><a href="#内存缓存的实现方式" class="headerlink" title="内存缓存的实现方式"></a>内存缓存的实现方式</h3><p>内存缓存的实现很简单，本质就是存在一个变量，变量处于内存中，所以我们管它叫内存缓存，常见实现方式为<code>Map</code>存储变量，Android 的SDK目前已经内置了内存缓存<code>LruCache</code>,在V4包中也有这样一个类，区别是V4包中多了一个方法，其他一样。查看这个类的源码会发现内存存储变量的容器就是一个<code>Map</code></p>
+<h3 id="内存缓存策略"><a href="#内存缓存策略" class="headerlink" title="内存缓存策略"></a>内存缓存策略</h3><p>缓存的容量会有一个最大值限制，不可能无限缓存变量，当内存满的时候，我们需要移出一些旧的数据，怎么判定移除哪一个数据，这就需要一个算法来计算，我们称之为策略，策略有多种</p>
+<ul>
+<li><code>FIFO</code> FirstInFirstOut，先进先出算法，当内存满时，移除最先存入队列entry</li>
+<li><code>Largest</code>，最大使用算法，当内存满时，移除占空间最大的entry</li>
+<li><code>LFU</code> LeastFrequentlyUsed，最低使用频率算法，当内存满时，移除使用频率最低的entry</li>
+<li><code>LRU</code> LeastRecentlyUsed，近期最少使用算法，当内存满时，移除最近使用频率最低的entry(LFU基础上更加完善)</li>
+</ul>
+<p>Android SDK中的<code>LruCache</code>看名字就知道是实现了<code>LRU</code>策略</p>
+<h3 id="自己实现内存缓存"><a href="#自己实现内存缓存" class="headerlink" title="自己实现内存缓存"></a>自己实现内存缓存</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">PolicyMemoryCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">MemoryCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_NORMAL_CACHE_SIZE_IN_MB = <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE_UNIT_MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_NORMAL_CACHE_SIZE = MAX_NORMAL_CACHE_SIZE_IN_MB * SIZE_UNIT_MB;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> sizeLimit;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"memory cache"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AtomicInteger cacheSize;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> Map&lt;K, V&gt; mMap = Collections.synchronizedMap(<span class="keyword">new</span> LinkedHashMap&lt;K, V&gt;());</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PolicyMemoryCache</span><span class="params">(<span class="keyword">int</span> sizeLimit)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.sizeLimit = sizeLimit;</span><br><span class="line"></span><br><span class="line">        cacheSize = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line">        <span class="keyword">if</span> (sizeLimit &gt; MAX_NORMAL_CACHE_SIZE) &#123;</span><br><span class="line">            Log.w(TAG, <span class="string">"You set too large memory cache size (more than %1$d Mb)"</span> + MAX_NORMAL_CACHE_SIZE_IN_MB);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> putSuccessfully = <span class="keyword">false</span>;</span><br><span class="line">        <span class="comment">// Try to add value to hard cache</span></span><br><span class="line">        <span class="keyword">int</span> valueSize = safeSizeOf(key, value);</span><br><span class="line">        <span class="keyword">int</span> sizeLimit = getSizeLimit();</span><br><span class="line">        <span class="keyword">int</span> curCacheSize = cacheSize.get();</span><br><span class="line">        <span class="keyword">if</span> (valueSize &lt; sizeLimit) &#123;</span><br><span class="line">            <span class="keyword">while</span> (curCacheSize + valueSize &gt; sizeLimit) &#123;</span><br><span class="line">                K removeKey = removeNext();</span><br><span class="line">                <span class="keyword">if</span> (removeKey == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                V v = mMap.remove(removeKey);</span><br><span class="line">                <span class="keyword">if</span> (v != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    curCacheSize = cacheSize.addAndGet(-safeSizeOf(removeKey, v)); <span class="comment">//cacheSize--</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            mMap.put(key, value);</span><br><span class="line">            cacheSize.addAndGet(valueSize);</span><br><span class="line">            putSuccessfully = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> putSuccessfully;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">remove</span><span class="params">(K key)</span> </span>&#123;</span><br><span class="line">        V v = mMap.remove(key);</span><br><span class="line">        <span class="keyword">if</span> (v != <span class="keyword">null</span>) &#123;</span><br><span class="line">            cacheSize.addAndGet(-safeSizeOf(key, v)); <span class="comment">//cacheSize--</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> v;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(K key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mMap.get(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mMap.clear();</span><br><span class="line">        cacheSize.set(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">getSizeLimit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sizeLimit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Collection&lt;K&gt; <span class="title">keys</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mMap) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> HashSet&lt;K&gt;(mMap.keySet());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">safeSizeOf</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> result = sizeOf(key, value);</span><br><span class="line">        <span class="keyword">if</span> (result &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Negative size: "</span> + key + <span class="string">"="</span> + value);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">/*Iterator&lt;Map.Entry&lt;K, V&gt;&gt; iterator = mMap.entrySet().iterator();</span></span><br><span class="line"><span class="comment">        while (iterator.hasNext()) &#123;</span></span><br><span class="line"><span class="comment">            System.out.println(iterator.next().getValue());</span></span><br><span class="line"><span class="comment">        &#125;*/</span></span><br><span class="line">        System.out.println(<span class="string">"mMap:"</span>+mMap);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">sizeOf</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> size = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (value <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">            size = ((String) value).getBytes().length;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (value <span class="keyword">instanceof</span> Bitmap) &#123;</span><br><span class="line">            Bitmap bitmapValue = (Bitmap) value;</span><br><span class="line">            <span class="comment">//size = bitmapValue.getRowBytes() * bitmapValue.getHeight();</span></span><br><span class="line">            size = (<span class="keyword">int</span>) sizeOf(bitmapValue);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (value <span class="keyword">instanceof</span> Serializable) &#123;</span><br><span class="line">            Serializable serializableValue =(Serializable) value;</span><br><span class="line">            size = (<span class="keyword">int</span>) sizeOf(serializableValue);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (value <span class="keyword">instanceof</span> Iterable) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Object item : ((Iterable) value)) &#123;</span><br><span class="line">                size += sizeOf(key, (V) item);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">sizeOf</span><span class="params">(Serializable serial)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (serial == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> size = -<span class="number">1</span>;</span><br><span class="line">        ByteArrayOutputStream baos = <span class="keyword">null</span>;</span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            baos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">            oos = <span class="keyword">new</span> ObjectOutputStream(baos);</span><br><span class="line">            oos.writeObject(serial);</span><br><span class="line">            oos.flush();</span><br><span class="line">            size = baos.size();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> SizeCalculateException(e.getMessage());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NotSerializableException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> SizeCalculateException(<span class="string">"Cache object does not implement serializable interface"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                oos.close();</span><br><span class="line">                baos.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">sizeOf</span><span class="params">(Bitmap bitmap)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (bitmap == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> size = -<span class="number">1</span>;</span><br><span class="line">        ByteArrayOutputStream baos = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            baos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">            bitmap.compress(Bitmap.CompressFormat.PNG, <span class="number">100</span>, baos);</span><br><span class="line">            size = baos.size();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                baos.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> K <span class="title">removeNext</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个基类，实现了变量的存储，取出，变量大小计算，抽象了removeNext函数返回需要移除的entry的Key，由子类实现策略</p>
+<p>下面看看<code>Largest</code>策略的实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LargestMemoryCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">PolicyMemoryCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;K, Integer&gt; valueSizes = Collections.synchronizedMap(<span class="keyword">new</span> HashMap&lt;K, Integer&gt;());</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LargestMemoryCache</span><span class="params">(<span class="keyword">int</span> sizeLimit)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(sizeLimit);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">super</span>.put(key, value)) &#123;</span><br><span class="line">            valueSizes.put(key, safeSizeOf(key, value));</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">remove</span><span class="params">(K key)</span> </span>&#123;</span><br><span class="line">        valueSizes.remove(key);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.remove(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        valueSizes.clear();</span><br><span class="line">        <span class="keyword">super</span>.clear();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> K <span class="title">removeNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Integer maxSize = <span class="keyword">null</span>;</span><br><span class="line">        K largestKey = <span class="keyword">null</span>;</span><br><span class="line">        Set&lt;Entry&lt;K, Integer&gt;&gt; entries = valueSizes.entrySet();</span><br><span class="line">        <span class="keyword">synchronized</span> (valueSizes) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Entry&lt;K, Integer&gt; entry : entries) &#123;</span><br><span class="line">                <span class="keyword">if</span> (largestKey == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    maxSize = entry.getValue();</span><br><span class="line">                    largestKey = entry.getKey();</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    Integer size = entry.getValue();</span><br><span class="line">                    <span class="keyword">if</span> (size &gt; maxSize) &#123;</span><br><span class="line">                        maxSize = size;</span><br><span class="line">                        largestKey = entry.getKey();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        valueSizes.remove(largestKey);</span><br><span class="line">        <span class="keyword">return</span> largestKey;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在put变量的时候使用Map存储了每个变量的大小，在removeNext中计算出当前存储变量中size最大的一个Entry的key。</p>
+<p>再看看<code>LFU</code>的策略实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LFUMemoryCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">PolicyMemoryCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;K, Integer&gt; usingCounts = Collections.synchronizedMap(<span class="keyword">new</span> HashMap&lt;K, Integer&gt;());</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LFUMemoryCache</span><span class="params">(<span class="keyword">int</span> sizeLimit)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(sizeLimit);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">super</span>.put(key, value)) &#123;</span><br><span class="line">            usingCounts.put(key, <span class="number">0</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(K key)</span> </span>&#123;</span><br><span class="line">        V value = <span class="keyword">super</span>.get(key);</span><br><span class="line">        <span class="comment">// Increment usage count for value if value is contained in hardCache</span></span><br><span class="line">        <span class="keyword">if</span> (value != <span class="keyword">null</span>) &#123;</span><br><span class="line">            Integer usageCount = usingCounts.get(key);</span><br><span class="line">            <span class="keyword">if</span> (usageCount != <span class="keyword">null</span>) &#123;</span><br><span class="line">                usingCounts.put(key, usageCount + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">remove</span><span class="params">(K key)</span> </span>&#123;</span><br><span class="line">        usingCounts.remove(key);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.remove(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        usingCounts.clear();</span><br><span class="line">        <span class="keyword">super</span>.clear();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> K <span class="title">removeNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Integer minUsageCount = <span class="keyword">null</span>;</span><br><span class="line">        K leastUsedKey = <span class="keyword">null</span>;</span><br><span class="line">        Set&lt;Entry&lt;K, Integer&gt;&gt; entries = usingCounts.entrySet();</span><br><span class="line">        <span class="keyword">synchronized</span> (usingCounts) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Entry&lt;K, Integer&gt; entry : entries) &#123;</span><br><span class="line">                <span class="keyword">if</span> (leastUsedKey == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    leastUsedKey = entry.getKey();</span><br><span class="line">                    minUsageCount = entry.getValue();</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    Integer lastValueUsage = entry.getValue();</span><br><span class="line">                    <span class="keyword">if</span> (lastValueUsage &lt; minUsageCount) &#123;</span><br><span class="line">                        minUsageCount = lastValueUsage;</span><br><span class="line">                        leastUsedKey = entry.getKey();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        usingCounts.remove(leastUsedKey);</span><br><span class="line">        <span class="keyword">return</span> leastUsedKey;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样也是用一个Map来保存每个变量的使用次数，在每次get的时候，进行+1，removeNext函数中计算出使用次数最少的Entry的Key</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>内存缓存基本就这些，没什么难的知识，无非就是策略的实现会复杂一些，以上只是一种实现方式，也有别的实现方式，欢迎交流</p>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2017/01/03/App开发中的内存缓存/" target="_blank" rel="noopener">http://robinx.net/2017/01/03/App开发中的内存缓存/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

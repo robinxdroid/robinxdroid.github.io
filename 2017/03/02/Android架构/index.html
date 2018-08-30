@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android架构 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="架构," />
+  
+
+  <meta name="description" content="引言以下的app项目结构，相信大家都写过 |--package    |--activity    |--adapter    |--constants    |--dao    |--entity    |--fragment    |--utils    |--view 相同功能的类都放在同一个包中，耦合也特别严重，当工作了一段时间后，随着技术提升，我们知道了高内聚，低耦合，其中解耦是个非常重">
+<meta name="keywords" content="架构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android架构">
+<meta property="og:url" content="http://yoursite.com/2017/03/02/Android架构/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="引言以下的app项目结构，相信大家都写过 |--package    |--activity    |--adapter    |--constants    |--dao    |--entity    |--fragment    |--utils    |--view 相同功能的类都放在同一个包中，耦合也特别严重，当工作了一段时间后，随着技术提升，我们知道了高内聚，低耦合，其中解耦是个非常重">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.017Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android架构">
+<meta name="twitter:description" content="引言以下的app项目结构，相信大家都写过 |--package    |--activity    |--adapter    |--constants    |--dao    |--entity    |--fragment    |--utils    |--view 相同功能的类都放在同一个包中，耦合也特别严重，当工作了一段时间后，随着技术提升，我们知道了高内聚，低耦合，其中解耦是个非常重">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要重视解耦，重视架构"><span class="toc-text">为什么要重视解耦，重视架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android-module架构"><span class="toc-text">Android module架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android-project架构"><span class="toc-text">Android project架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-Android架构" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">Android架构</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.03.02</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>以下的app项目结构，相信大家都写过<br></p>
+<pre><code>|--package
+   |--activity
+   |--adapter
+   |--constants
+   |--dao
+   |--entity
+   |--fragment
+   |--utils
+   |--view
+</code></pre><p>相同功能的类都放在同一个包中，耦合也特别严重，当工作了一段时间后，随着技术提升，我们知道了高内聚，低耦合，其中解耦是个非常重要的过程。这就涉及到了今天的主题：app架构</p>
+<h2 id="为什么要重视解耦，重视架构"><a href="#为什么要重视解耦，重视架构" class="headerlink" title="为什么要重视解耦，重视架构"></a>为什么要重视解耦，重视架构</h2><p>这个有一定的Android开发经验的都知道，在开发完成后，我们的工作是维护，版本的升级，功能修改，功能增加，功能废除，如果类似引言中的项目结构，随便小改一下，其他模块随之就要改变，牵一发动全身。维护艰难，成本高昂。</p>
+<h2 id="Android-module架构"><a href="#Android-module架构" class="headerlink" title="Android module架构"></a>Android module架构</h2><p>良好的架构无疑会简化app结构，层次分明，降低维护成本，开发起来也得心应手。</p>
+<ul>
+<li>MVC 最常见的，引言中的项目结构就是一个mvc</li>
+<li>MVP 近两年Android小伙伴们推崇的架构</li>
+<li>Flux FaceBook提出的Android架构，没尝试过，基于事件总线通信，个人不太喜欢</li>
+<li>Clean 关于Clean框架的介绍，网上也有不少，尝试写过，分层明确，在mvp架构基础上更加深入解耦，但同时也带来一些负面的东西，比如逻辑的复杂性，写一般的小型app，没必要使用，因为太麻烦了，直观感受。</li>
+</ul>
+<p>以上只是一个Android Moudle中使用的架构。Flux，Clean暂且不说，MVP优化module内部的解耦，可以尝试。</p>
+<h2 id="Android-project架构"><a href="#Android-project架构" class="headerlink" title="Android project架构"></a>Android project架构</h2><p>module的架构优化只能提升module内部的解耦工作。当一个app由多人协同开发，内部有多个module的时候，问题就暴露的更多了。</p>
+<p>AndroidStudio 引入module概念，其实就是模块化，一个module一个功能。</p>
+<p>举个例子：一款简易商城app，我们可以简单分为以下几个模块</p>
+<ol>
+<li>主module，壳工程，依赖以下模块</li>
+<li>搜索模块</li>
+<li>购物车模块</li>
+<li>结算模块</li>
+<li>钱包模块</li>
+<li>商品模块</li>
+<li>升级模块</li>
+</ol>
+<p>这样每个人负责一个或多个模块，互不干扰，看起来蛮不错的，结构分明。但是不能高兴太早，这只能算简单的app分块，当app越来越复杂的时候，module与module之间会不可避免的也会存在相互依赖，就像滚雪球一样，会变得越来越不可控，修改了一个模块，要花费心思寻找所有依赖module A的module N是否会出现问题,当需要删除一个模块的时候，所有依赖的module也都会报错。错综复杂。</p>
+<p>因此，在app project架构上还要花心思。从去年开始，圈中从插件化流向组件化，因为相比于插件化，组件化不会过多的涉及编译层的问题，开发透明。组件化其中重要的一个概念叫“路由”<br>关于组件化，我也一直在思考。这两天正好看到了一片说组件化的文章，说的非常好，而且给出了代码，感兴趣的可以去看看，传送门：<a href="http://blog.spinytech.com/2016/12/28/android_modularization/" target="_blank" rel="noopener">Android架构思考(模块化、多进程)</a></p>
+<p>github上也有许多人开源出了不同的路由库，但是基本上都只涉及到了Activity之间的跳转。对于通信这块考虑的并不够。上文的方案可以很好的解决这方面问题，而且给出了多进程间通信的问题解决方案，很nice。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>关于Android的架构，按照以上所说，基本可以很好的优化，当然适用于大型项目，类似外包这种快速小型项目，那就没必要了。</p>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2017/03/02/Android架构/" target="_blank" rel="noopener">http://robinx.net/2017/03/02/Android架构/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

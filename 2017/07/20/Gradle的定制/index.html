@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>Gradle的定制 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="gradle," />
+  
+
+  <meta name="description" content="引言AndroidStudio普及以来，一个完整的Android应用Gradle的配置必不可少，针对Gradle的定制，结合自己日常使用以及网络上其他人分享的内容整理了这篇 我的配置1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859">
+<meta name="keywords" content="gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle的定制">
+<meta property="og:url" content="http://yoursite.com/2017/07/20/Gradle的定制/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="引言AndroidStudio普及以来，一个完整的Android应用Gradle的配置必不可少，针对Gradle的定制，结合自己日常使用以及网络上其他人分享的内容整理了这篇 我的配置1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-30T09:57:05.019Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle的定制">
+<meta name="twitter:description" content="引言AndroidStudio普及以来，一个完整的Android应用Gradle的配置必不可少，针对Gradle的定制，结合自己日常使用以及网络上其他人分享的内容整理了这篇 我的配置1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的配置"><span class="toc-text">我的配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他配置"><span class="toc-text">其他配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-Gradle的定制" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">Gradle的定制</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.07.20</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>AndroidStudio普及以来，一个完整的Android应用Gradle的配置必不可少，针对Gradle的定制，结合自己日常使用以及网络上其他人分享的内容整理了这篇</p>
+<h2 id="我的配置"><a href="#我的配置" class="headerlink" title="我的配置"></a>我的配置</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: <span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//打包的默认时间</span></span><br><span class="line"><span class="function">def <span class="title">releaseTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Date().format(<span class="string">"yyyy-MM-dd"</span>, TimeZone.getTimeZone(<span class="string">"UTC"</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion ANDROID_BUILD_SDK_VERSION as <span class="keyword">int</span></span><br><span class="line">    buildToolsVersion ANDROID_BUILD_TOOLS_VERSION</span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">"net.robinx.hengrui"</span></span><br><span class="line">        minSdkVersion ANDROID_BUILD_MIN_SDK_VERSION as <span class="keyword">int</span></span><br><span class="line">        targetSdkVersion ANDROID_BUILD_TARGET_SDK_VERSION as <span class="keyword">int</span></span><br><span class="line">        versionCode VERSION_CODE as <span class="keyword">int</span></span><br><span class="line">        versionName VERSION_NAME</span><br><span class="line"></span><br><span class="line">        vectorDrawables.useSupportLibrary = <span class="keyword">true</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//签名文件配置</span></span><br><span class="line">    signingConfigs &#123;</span><br><span class="line">        myConfig &#123;</span><br><span class="line">            <span class="function">storeFile <span class="title">file</span><span class="params">(<span class="string">'xxxxx.jks'</span>)</span></span></span><br><span class="line"><span class="function">            storePassword 'xxxxxx'</span></span><br><span class="line"><span class="function">            keyAlias 'xxxxx'</span></span><br><span class="line"><span class="function">            keyPassword 'xxxxx'</span></span><br><span class="line"><span class="function">        &#125;</span></span><br><span class="line"><span class="function">    &#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    buildTypes </span>&#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            <span class="comment">//签名文件配置</span></span><br><span class="line">            signingConfig android.signingConfigs.myConfig</span><br><span class="line">            minifyEnabled <span class="keyword">false</span></span><br><span class="line">            <span class="comment">//混淆文件配置</span></span><br><span class="line">            <span class="function">proguardFiles <span class="title">getDefaultProguardFile</span><span class="params">(<span class="string">'proguard-android.txt'</span>)</span>, 'proguard-rules.pro'</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">            <span class="comment">// --------------多渠道打包自定义输出配置start-----------------------</span></span></span><br><span class="line"><span class="function">            applicationVariants.all </span>&#123; variant -&gt;</span><br><span class="line">                variant.outputs.each &#123; output -&gt;</span><br><span class="line">                    def outputFile = output.outputFile</span><br><span class="line">                    <span class="keyword">if</span> (outputFile != <span class="keyword">null</span> &amp;&amp; outputFile.name.endsWith(<span class="string">'.apk'</span>)) &#123;</span><br><span class="line">                        <span class="comment">// 输出apk名称为HengRui_v1.0_2016-01-15_wandoujia.apk</span></span><br><span class="line">                        def fileName = <span class="string">"HengRui_v$&#123;defaultConfig.versionCode&#125;_$&#123;releaseTime()&#125;_$&#123;variant.productFlavors[0].name&#125;.apk"</span></span><br><span class="line">                        output.outputFile = <span class="keyword">new</span> File(outputFile.parent, fileName)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// --------------多渠道打包自定义输出配置end-----------------------</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//百度地图Key</span></span><br><span class="line">            manifestPlaceholders = [baidu_map_key: <span class="string">"xxxxxxxxxxxxxxxxxxx"</span>]</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        debug &#123;</span><br><span class="line">            signingConfig android.signingConfigs.myConfig</span><br><span class="line">            minifyEnabled <span class="keyword">false</span></span><br><span class="line">            <span class="function">proguardFiles <span class="title">getDefaultProguardFile</span><span class="params">(<span class="string">'proguard-android.txt'</span>)</span>, 'proguard-rules.pro'</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">            <span class="comment">//百度地图Key</span></span></span><br><span class="line"><span class="function">            manifestPlaceholders </span>= [baidu_map_key: <span class="string">"xxxxxxxxxxxxxxxxxxx"</span>]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//--------------------多渠道打包start---------------------</span></span><br><span class="line">    productFlavors &#123;</span><br><span class="line">        Default &#123;&#125;</span><br><span class="line"><span class="comment">//        XiaoMI &#123;&#125;</span></span><br><span class="line"><span class="comment">//        WanDouJia &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Oppo &#123;&#125;</span></span><br><span class="line"><span class="comment">//        QiHu360 &#123;&#125;</span></span><br><span class="line"><span class="comment">//        HuaWei &#123;&#125;</span></span><br><span class="line"><span class="comment">//        YingYongBao &#123;&#125;</span></span><br><span class="line"><span class="comment">//        BaiDu &#123;&#125;</span></span><br><span class="line"><span class="comment">//        TaoBaoPP &#123;&#125;</span></span><br><span class="line"><span class="comment">//        MeiZu &#123;&#125;</span></span><br><span class="line"><span class="comment">//        GooglePlay &#123;&#125;</span></span><br><span class="line"><span class="comment">//        CoolChua &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Pgyer &#123;&#125;</span></span><br><span class="line"><span class="comment">//        SAMSUNG &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Lenovo &#123;&#125;</span></span><br><span class="line"><span class="comment">//        AppChina &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Eoe &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Haixin &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Letv &#123;&#125;</span></span><br><span class="line"><span class="comment">//        WoStore &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Gfan &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Nduoa &#123;&#125;</span></span><br><span class="line"><span class="comment">//        MoguStore &#123;&#125;</span></span><br><span class="line"><span class="comment">//        MuMaYI &#123;&#125;</span></span><br><span class="line"><span class="comment">//        TianYi &#123;&#125;</span></span><br><span class="line"><span class="comment">//        LiQucn &#123;&#125;</span></span><br><span class="line"><span class="comment">//        AnZhuoYuan &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Mopo &#123;&#125;</span></span><br><span class="line"><span class="comment">//        Ard9 &#123;&#125;</span></span><br><span class="line"><span class="comment">//        AppFun &#123;&#125;</span></span><br><span class="line"><span class="comment">//        AnBei &#123;&#125;</span></span><br><span class="line"><span class="comment">//        YingYongBei &#123;&#125;</span></span><br><span class="line"><span class="comment">//        AnFone &#123;&#125;</span></span><br><span class="line"><span class="comment">//        ZhuoLe &#123;&#125;</span></span><br><span class="line"><span class="comment">//        AndroidMarket &#123;&#125;</span></span><br><span class="line"><span class="comment">//        UC &#123;&#125;</span></span><br><span class="line"><span class="comment">//        MobileMarket &#123;&#125;</span></span><br><span class="line"><span class="comment">//        KaiQi &#123;&#125;</span></span><br><span class="line"><span class="comment">//        SouGou &#123;&#125;</span></span><br><span class="line"><span class="comment">//        AiQiYi &#123;&#125;</span></span><br><span class="line"><span class="comment">//        YunOS &#123;&#125;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    productFlavors.all &#123;</span><br><span class="line">        flavor -&gt; flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//--------------------多渠道打包end---------------------</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//取出Link报错，否则无法打正式包</span></span><br><span class="line">    lintOptions &#123;</span><br><span class="line">        checkReleaseBuilds <span class="keyword">false</span></span><br><span class="line">        abortOnError <span class="keyword">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//aar目录</span></span><br><span class="line">    repositories &#123;</span><br><span class="line">        flatDir &#123;</span><br><span class="line">            dirs <span class="string">'libs'</span>, <span class="string">'../lib.aar/libs'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//file lib</span></span><br><span class="line">    <span class="function">compile <span class="title">fileTree</span><span class="params">(include: [<span class="string">'*.jar'</span>], dir: <span class="string">'libs'</span>)</span></span></span><br><span class="line"><span class="function">    <span class="comment">//module lib</span></span></span><br><span class="line"><span class="function">    compile <span class="title">project</span><span class="params">(<span class="string">':lib.aar'</span>)</span></span></span><br><span class="line"><span class="function">    <span class="comment">//android lib</span></span></span><br><span class="line"><span class="function">    compile 'com.android.support:appcompat-v7:25.0.1'</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这是平时自己用的配置，主要自定义了打包的文件名称，debug包使用release签名，以及多渠道打包</p>
+<h2 id="其他配置"><a href="#其他配置" class="headerlink" title="其他配置"></a>其他配置</h2><p>网络上的一篇配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">25</span></span><br><span class="line">    buildToolsVersion <span class="string">"25.0.3"</span></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">"com.imliujun.gradle"</span></span><br><span class="line">        minSdkVersion <span class="number">16</span></span><br><span class="line">        targetSdkVersion <span class="number">25</span></span><br><span class="line">        <span class="function">versionCode <span class="title">gitVersionCode</span><span class="params">()</span>  <span class="comment">//获取 git 的 commit 次数</span></span></span><br><span class="line"><span class="function">        versionName rootProject.ext.versionName</span></span><br><span class="line"><span class="function">        manifestPlaceholders </span>= [UMENG_APP_KEY      : <span class="string">"填你的友盟 APP KEY"</span>,</span><br><span class="line">                                UMENG_CHANNEL_VALUE: <span class="string">"默认的渠道名"</span>]</span><br><span class="line">    &#125;</span><br><span class="line">    signingConfigs &#123;</span><br><span class="line">	<span class="comment">//在这里配置相关的签名信息</span></span><br><span class="line">        keyStore &#123;</span><br><span class="line">            <span class="function">storeFile <span class="title">file</span><span class="params">(<span class="string">"test.jks"</span>)</span></span></span><br><span class="line"><span class="function">            storePassword "111111"</span></span><br><span class="line"><span class="function">            keyAlias "test"</span></span><br><span class="line"><span class="function">            keyPassword "111111"</span></span><br><span class="line"><span class="function">        &#125;</span></span><br><span class="line"><span class="function">    &#125;</span></span><br><span class="line"><span class="function">    buildTypes </span>&#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            <span class="comment">// 不显示Log</span></span><br><span class="line">            buildConfigField <span class="string">"boolean"</span>, <span class="string">"LOG_DEBUG"</span>, <span class="string">"false"</span></span><br><span class="line">            signingConfig signingConfigs.keyStore <span class="comment">//设置签名文件</span></span><br><span class="line">        &#125;</span><br><span class="line">        debug &#123;</span><br><span class="line">            <span class="comment">// 显示Log</span></span><br><span class="line">            buildConfigField <span class="string">"boolean"</span>, <span class="string">"LOG_DEBUG"</span>, <span class="string">"true"</span></span><br><span class="line">            versionNameSuffix <span class="string">"-debug"</span>  <span class="comment">//设置后缀</span></span><br><span class="line">            signingConfig signingConfigs.keyStore  <span class="comment">//设置签名文件</span></span><br><span class="line">            manifestPlaceholders.UMENG_CHANNEL_VALUE = <span class="string">"test"</span> <span class="comment">//修改渠道名</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    productFlavors &#123;</span><br><span class="line">        offline &#123;</span><br><span class="line">            buildConfigField <span class="string">"String"</span>, <span class="string">"DOMAIN_NAME"</span>, <span class="string">"\"https://offline.domain.com/\""</span></span><br><span class="line">            <span class="function">versionName <span class="title">getTestVersionName</span><span class="params">()</span> <span class="comment">//修改 versionName</span></span></span><br><span class="line"><span class="function">        &#125;</span></span><br><span class="line"><span class="function">        online </span>&#123;</span><br><span class="line">            buildConfigField <span class="string">"String"</span>, <span class="string">"DOMAIN_NAME"</span>, <span class="string">"\"https://online.domain.com/\""</span></span><br><span class="line">        &#125;</span><br><span class="line">        admin &#123;</span><br><span class="line">            buildConfigField <span class="string">"String"</span>, <span class="string">"DOMAIN_NAME"</span>, <span class="string">"\"https://admin.domain.com/\""</span></span><br><span class="line">            versionName rootProject.ext.versionName + <span class="string">"-管理员"</span> <span class="comment">//修改 versionName</span></span><br><span class="line">            manifestPlaceholders.UMENG_CHANNEL_VALUE = <span class="string">"admin"</span> <span class="comment">//修改渠道名</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根目录gradle文件配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ext &#123;</span><br><span class="line">    versionName = <span class="string">"2.0.2"</span></span><br><span class="line">    testNum = <span class="string">"0001"</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function">def <span class="title">getTestVersionName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> String.format(<span class="string">"%s.%s"</span>, rootProject.ext.versionName,</span><br><span class="line">            rootProject.ext.testNum)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">gitVersionCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    def count = <span class="string">"git rev-list HEAD --count"</span>.execute().text.trim()</span><br><span class="line">    <span class="keyword">return</span> count.isInteger() ? count.toInteger() : <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>与自己平时使用的有些细微差别，可以参看这篇文章<a href="http://www.imliujun.com/gradle1.html" target="_blank" rel="noopener">http://www.imliujun.com/gradle1.html</a></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>结合两者相信可以定制出适合自己项目的gradle配置</p>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2017/07/20/Gradle的定制/" target="_blank" rel="noopener">http://robinx.net/2017/07/20/Gradle的定制/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
