@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+
+  <html class="dark page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>monkey压力测试 | RobinBlog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="测试,monkey," />
+  
+
+  <meta name="description" content="入门级知识，不过长时间不用命令容易忘，简单做个记录 命令格式shell monkey [-p 包名] [其他参数] [-v] 测试次数 [&amp;gt;/user/…/result.txt’可将结果打印到文本中）```12举例: adb shell monkey -p com.variflight.highspeed -s 3000 –ignore-crashes –ignore-timeouts -vv 6">
+<meta name="keywords" content="测试,monkey">
+<meta property="og:type" content="article">
+<meta property="og:title" content="monkey压力测试">
+<meta property="og:url" content="http://yoursite.com/2019/03/11/monkey压力测试/index.html">
+<meta property="og:site_name" content="RobinBlog">
+<meta property="og:description" content="入门级知识，不过长时间不用命令容易忘，简单做个记录 命令格式shell monkey [-p 包名] [其他参数] [-v] 测试次数 [&amp;gt;/user/…/result.txt’可将结果打印到文本中）```12举例: adb shell monkey -p com.variflight.highspeed -s 3000 –ignore-crashes –ignore-timeouts -vv 6">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-11T03:01:18.999Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="monkey压力测试">
+<meta name="twitter:description" content="入门级知识，不过长时间不用命令容易忘，简单做个记录 命令格式shell monkey [-p 包名] [其他参数] [-v] 测试次数 [&amp;gt;/user/…/result.txt’可将结果打印到文本中）```12举例: adb shell monkey -p com.variflight.highspeed -s 3000 –ignore-crashes –ignore-timeouts -vv 6">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?e0de6832e0e2c08124df0019a7ce1b56";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#命令格式"><span class="toc-text">命令格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参数"><span class="toc-text">参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析"><span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更多"><span class="toc-text">更多</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-monkey压力测试" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">monkey压力测试</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.03.11</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Robin</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>入门级知识，不过长时间不用命令容易忘，简单做个记录</p>
+<h2 id="命令格式"><a href="#命令格式" class="headerlink" title="命令格式"></a>命令格式</h2><figure class="highlight plain"><figcaption><span>shell monkey [-p 包名] [其他参数] [-v] 测试次数 [></span><a href="/user/…/result.txt]（注：‘>">/user/…/result.txt’可将结果打印到文本中）```</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">举例:</span><br></pre></td></tr></table></figure>
+<p>adb shell monkey -p com.variflight.highspeed -s 3000 –ignore-crashes –ignore-timeouts -vv 6000 &gt; /Users/robinwang/Downloads/monkey.txt<br><code>`</code><br>此命令翻译为自然语言是：monkey作用于此包，产生时间序列的种子序列值定为3000，运行中忽略程序崩溃、超时，同时监视本地程序崩溃，日志的详细信息级别为二级，产生6000个点击事件，相关日志会保存在所写路径中，搜索关键字‘crash’或‘anr’即可查看发生错误的部分。</p>
+<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><p>monkey -help：可查看参数说明列表。参数选项有：<br>（1）-p 包名1 -p 包名2 … ：指定一或多个待测试的包，若不指定则测试中可打开任意app；<br>（2）-v:指定打印日志的详细程度，有‘-v’,’-v -v’,’-v -v -v’三个级别；<br>（3）-s seed值：在测试中，虽然用户操作序列（每次操作按一定的顺序所组成的一系列操作）是随机生成的，但只要对同一个包指定相同的Seed值，就能使测试事件相同，可用于排错。所以也说这个操作序列是伪随机的。若不添加此参数，结果中会自动生成seed值；<br>（4）–-throttle 毫秒数：指定操作（即事件）间的时延，单位是毫秒；<br>（5）–-ignore-crashes：使得操作序列可以全部执行完，而不会在发生崩溃时就终止程序进程；<br>（6）–ignore-timeouts：使得操作序列可以全部执行完，而不会在发生ANR(Android Not Responding)时就终止程序进程；<br>（7）–-ignore-security-exceptions：使得操作序列可以全部执行完，而不会在发生许可错误时（如证书许可，网络许可等）时就终止程序进程；<br>（8）–-kill-process-after-error：使得当应用程序发生错误时停止运行并保持在当前状态，即仅是静止在发生错误时的状态，而不是结束该应用程序的进程；<br>（9）–-monitor-native-crashes：指定监视并报告应用程序发生崩溃的本地代码；<br>（10）–-pct-事件1 事件百分比1 -pct-事件2 事件百分比2 … ：用于指定某类事件数目占总事件数目的百分比；<br>其中所指定事件参数选项可为：<br>-flip(点击事件)<br>-touch(触摸事件是一个down-up事件)<br>-motion(动作事件由一个down事件、一系列的伪随机事件和一个up事件组成)<br>-trackball(轨迹事件，在屏幕上进行随机拖动)<br>-nav(基本导航事件，如上下左右键)<br>-majornav（主要导航事件，通常引发图形界面中的动作）<br>-syskeys(系统按键事件指如系统按键Home、Back、Start Call、End Call及volumeControl)<br>-appswitch(启动activity事件)<br>-anyevent(其它类型事件)<br>注意，各事件类型的百分比总数不能超过100。</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>一般我们可以一次发送5万次随机事件的请求，每个请求之间的间隔为150毫秒，测试大约会进行40min，完成以后就可以查看日志。<br>日志中可能的错误：</p>
+<p>程序异常退出，uncausedexception （ctrl+f搜索‘Fatal’）<br>程序强制关闭，ForceClosed (简称FC) （同上）<br>程序无响应，ApplicationNo Response（ctrl+f搜索‘ANR ’，加空格是为了屏蔽掉一些无效信息)<br>手动生成。</p>
+<h2 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h2><p>关于monkey压力测试，有同学了解的更多，想了解更详细可以查阅这篇文章<a href="https://blog.csdn.net/sinat_35762047/article/details/75137436" target="_blank" rel="noopener">Android压力测试快速入门教程</a></p>
+<blockquote>
+<p>转载请指明出处RobinBlog：<a href="http://robinx.net/2019/03/11/monkey压力测试/" target="_blank" rel="noopener">http://robinx.net/2019/03/11/monkey压力测试/</a></p>
+</blockquote>
+
+    
+  </div>
+  
+    
+      
+<!-- Gitalk评论插件通用代码 -->
+<div id="git"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'd91a7e64d2a3c319f65b',
+  clientSecret: 'ee46d5b1ae5c3cde56f5c4ea894353b10892076d',
+  repo: 'BlogComments',
+  owner: 'robinxdroid',
+  admin: ['robinxdroid'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('git')
+</script>
+<!-- Gitalk代码结束 -->
+
+  
+  
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
